@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDownIcon, CheckIcon } from '@radix-ui/react-icons';
 import { cn } from '../../utils/cn.js';
 

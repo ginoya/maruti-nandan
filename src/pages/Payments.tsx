@@ -9,7 +9,6 @@ import { fetchPayments, addPayment } from '../store/paymentsSlice';
 
 const Payments: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data: customers } = useAppSelector((state) => state.customers);
   const { data: payments, loading, error } = useAppSelector((state) => state.payments);
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
 

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { paymentService, type PaymentData, type FirebasePaymentData } from '../services/paymentService';
 
 interface PaymentsState {

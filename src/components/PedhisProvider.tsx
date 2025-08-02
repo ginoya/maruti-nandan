@@ -8,7 +8,7 @@ interface PedhisProviderProps {
 
 const PedhisProvider: React.FC<PedhisProviderProps> = ({ children }) => {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.pedhis);
+  const { data, error } = useAppSelector((state) => state.pedhis);
 
   useEffect(() => {
     // Fetch pedhis on component mount

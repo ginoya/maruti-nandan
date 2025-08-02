@@ -8,7 +8,7 @@ interface CustomersProviderProps {
 
 const CustomersProvider: React.FC<CustomersProviderProps> = ({ children }) => {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.customers);
+  const { data, error } = useAppSelector((state) => state.customers);
 
   useEffect(() => {
     // Fetch customers on component mount

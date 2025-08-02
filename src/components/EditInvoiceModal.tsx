@@ -23,7 +23,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   onSave, 
   initialData 
 }) => {
-  const [isClosing, setIsClosing] = useState(false);
+  const [isClosing,] = useState(false);
   
   // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
@@ -41,7 +41,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   // Get pedhis data from Redux
   const { pedhis, loading: pedhisLoading } = usePedhis();
 
-  const { customers, loading: customersLoading } = useCustomers();
+  const { customers } = useCustomers();
 
   // Transform pedhis data to dropdown options format
   const businesses = pedhis.map((pedhi: any) => ({

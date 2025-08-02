@@ -39,7 +39,7 @@ const PedhisList: React.FC = () => {
     <div className="p-md">
       <h3 className="text-lg font-semibold text-secondary-900 mb-md">Pedhis</h3>
       <div className="space-y-sm">
-        {pedhis.map((pedhi) => (
+        {pedhis.map((pedhi: { id: React.Key | null | undefined; name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }) => (
           <div
             key={pedhi.id}
             className="bg-white border border-gray-200 rounded-md p-sm hover:bg-gray-50"

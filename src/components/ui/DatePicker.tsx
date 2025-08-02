@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import * as Popover from '@radix-ui/react-popover';
-import { CalendarIcon } from '@radix-ui/react-icons';
+import React from 'react';
 import { cn } from '../../utils/cn.js';
 
 interface DatePickerProps {

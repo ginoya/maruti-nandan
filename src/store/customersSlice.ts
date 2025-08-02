@@ -9,7 +9,7 @@ export interface Customer {
 }
 
 interface CustomersState {
-  data: Customer[];
+  data: Customer[] | any;
   loading: boolean;
   error: string | null;
 }

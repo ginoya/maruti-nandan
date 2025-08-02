@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { type RootState } from '../store';
-import { fetchInvoices, saveInvoice, clearError, type FirebaseInvoiceData } from '../store/invoicesSlice';
+import { fetchInvoices, saveInvoice, clearError } from '../store/invoicesSlice';
 
 export const useInvoices = () => {
   const dispatch = useDispatch();
@@ -9,12 +9,12 @@ export const useInvoices = () => {
 
   // Fetch invoices on mount
   useEffect(() => {
-    dispatch(fetchInvoices());
+    dispatch(fetchInvoices() as any);
   }, [dispatch]);
 
   const saveInvoiceToFirebase = async (invoiceData: any) => {
     try {
-      await dispatch(saveInvoice(invoiceData)).unwrap();
+      await dispatch(saveInvoice(invoiceData) as any).unwrap();
       return true;
     } catch (error) {
       console.error('Failed to save invoice:', error);
@@ -32,6 +32,6 @@ export const useInvoices = () => {
     error,
     saveInvoiceToFirebase,
     clearErrorMessage,
-    refetch: () => dispatch(fetchInvoices())
+    refetch: () => dispatch(fetchInvoices() as any)
   };
 }; 

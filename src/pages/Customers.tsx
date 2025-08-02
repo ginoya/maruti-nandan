@@ -98,7 +98,7 @@ const Customers: React.FC = () => {
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-gray-200">
-                   {customers.map((customer, index) => (
+                   {customers.map((customer:any, index:any) => (
                      <tr key={customer.id} className="hover:bg-gray-50">
                        <td className="px-lg py-md text-sm text-secondary-600">
                          {index + 1}

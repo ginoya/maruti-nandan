@@ -10,7 +10,7 @@ export interface Pedhi {
 }
 
 interface PedhisState {
-  data: Pedhi[];
+  data: Pedhi[] | any;
   loading: boolean;
   error: string | null;
 }

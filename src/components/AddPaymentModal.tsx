@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Input, Dropdown, DatePicker } from './ui';
 import { useAppSelector } from '../store/hooks';
-import { paymentService } from '../services/paymentService';
 
 interface AddPaymentModalProps {
   isOpen: boolean;
@@ -94,7 +93,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   };
 
   const handleCustomerSelect = (customerId: string) => {
-    const selectedCustomer = customers.find(customer => customer.id === customerId);
+    const selectedCustomer = customers.find((customer: { id: string; }) => customer.id === customerId);
     if (selectedCustomer) {
       setFormData(prev => ({
         ...prev,
@@ -146,7 +145,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
               Customer
             </label>
                          <Dropdown
-               options={customers.map(customer => ({
+               options={customers.map((customer: { id: any; name: any; }) => ({
                  value: customer.id,
                  label: customer.name
                }))}
