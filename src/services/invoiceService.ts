@@ -3,6 +3,7 @@ import { collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, de
 import type { InvoiceData } from '../store/invoiceSlice';
 
 export interface FirebaseInvoiceData extends InvoiceData {
+  id?: string;
   grandTotal?: number;
   createdAt?: Date;
   updatedAt?: Date;

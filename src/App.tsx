@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Invoice from './pages/Invoice'
 import CreateInvoice from './pages/CreateInvoice'
+import ViewInvoice from './pages/ViewInvoice'
 import Customers from './pages/Customers'
 import Payments from './pages/Payments'
 import Dashboard from './pages/Dashboard'
@@ -53,6 +54,11 @@ function App() {
           <Route path="/invoice/new" element={
             <ProtectedRoute>
               <CreateInvoice />
+            </ProtectedRoute>
+          } />
+          <Route path="/invoice/:id" element={
+            <ProtectedRoute>
+              <ViewInvoice />
             </ProtectedRoute>
           } />
           
