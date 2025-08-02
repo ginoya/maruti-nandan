@@ -1,33 +1,34 @@
-interface User {
-    //id: string;
-    username: string;
-    password: string;
-    isActive: boolean;
-  }
-  
-  interface Business {
-    //maruti nandan and ganesh
-    //pedhi
-    displayName: string;
-    isActive: boolean;
-  }
-  
-  interface Customer {
-    //vepari
-    diplayName: string;
-  }
-  
-  interface Payments {
-    customerName: string; //Customer.displayName
-    customerId: string; //Customer.id
-    paymentDate: string;
-    jodi: number;
-    noOfBox: number;
-    rate: number;
-    amount: number; //(jodi * noOfBox * rate),
-    createdBy: string;
-    updatedBy: string;
-    createdDate: string;
-    updatedDate: string;
-  }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface Business {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface Payments {
+  id: string;
+  amount: number;
+  date: string;
+  status: 'pending' | 'completed' | 'failed';
+}
   

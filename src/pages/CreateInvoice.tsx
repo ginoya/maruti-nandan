@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navigation from '../components/Navigation';
-import { Button, Input } from '../components/ui';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Button } from '../components/ui';
 import { generateInvoicePDF } from '../utils/pdfGenerator';
 
 interface InvoiceItem {
@@ -15,7 +16,8 @@ interface InvoiceItem {
 }
 
 const CreateInvoice: React.FC = () => {
-  const [invoiceData, setInvoiceData] = useState({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [invoiceData, ] = useState({
     businessName: 'JAY BALAJI ENTERPRISE',
     clientName: 'GNG',
     invoiceNo: '5',
@@ -105,7 +107,8 @@ const CreateInvoice: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {invoiceData.items.map((item, index) => (
+                {invoiceData.items.map((item) => (
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   <tr key={item.id} className="hover:bg-gray-50">
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.no}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.particular}</span></td>

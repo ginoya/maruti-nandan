@@ -26,23 +26,24 @@ const Input: React.FC<InputProps> = ({
     lg: 'px-xl py-lg text-lg min-h-[52px]'
   };
   
-  const getInputStyles = () => {
-    const baseStyles = {
-      borderColor: error ? 'var(--error-300)' : 'var(--gray-200)',
-      boxShadow: 'var(--shadow-soft)',
-    };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const getInputStyles = () => {
+  //   const baseStyles = {
+  //     borderColor: error ? 'var(--error-300)' : 'var(--gray-200)',
+  //     boxShadow: 'var(--shadow-soft)',
+  //   };
 
-    return {
-      ...baseStyles,
-      ':focus': {
-        borderColor: error ? 'var(--error-400)' : 'var(--primary-900)',
-        boxShadow: error ? 'var(--shadow-error)' : 'var(--shadow-primary)',
-      },
-      ':hover': {
-        borderColor: 'var(--gray-300)',
-      }
-    };
-  };
+  //   return {
+  //     ...baseStyles,
+  //     ':focus': {
+  //       borderColor: error ? 'var(--error-400)' : 'var(--primary-900)',
+  //       boxShadow: error ? 'var(--shadow-error)' : 'var(--shadow-primary)',
+  //     },
+  //     ':hover': {
+  //       borderColor: 'var(--gray-300)',
+  //     }
+  //   };
+  // };
   
   const inputClasses = `${baseClasses} ${sizeClasses[size]} ${className}`;
   
