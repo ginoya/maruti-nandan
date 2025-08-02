@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Button } from '../components/ui';
@@ -11,8 +12,9 @@ import { useInvoice } from '../hooks/useInvoice';
 import { useInvoices } from '../hooks/useInvoices';
 
 const CreateInvoice: React.FC = () => {
-  const { invoiceData, calculateTotals, updateDetails, addItem } = useInvoice();
-  const { saveInvoiceToFirebase } = useInvoices();
+  const { invoiceData, calculateTotals, updateDetails, addItem, removeItem, reset } = useInvoice();
+  const { saveInvoiceToFirebase, refetch } = useInvoices();
+  const navigate = useNavigate();
 
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -48,6 +50,10 @@ const CreateInvoice: React.FC = () => {
     });
   };
 
+  const handleDeleteItem = (id: number) => {
+    removeItem(id);
+  };
+
   useEffect(() => {
     if(!invoiceData.businessName){
       handleEditInvoice();
@@ -79,11 +85,20 @@ const CreateInvoice: React.FC = () => {
       if (success) {
         console.log('Invoice saved to Firebase successfully');
         
+        // Fetch invoices again to refresh the data
+        refetch();
+        
         // Then generate the PDF
         await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate.replace(/\//g, '-')}.pdf`);
         
         // You can add a success toast notification here
         console.log('Invoice saved and PDF generated successfully');
+        
+        // Reset the invoice slice after successful save and print
+        reset();
+        
+        // Redirect to invoices page after successful save and print
+        navigate('/invoice');
       } else {
         console.error('Failed to save invoice to Firebase');
       }
@@ -101,9 +116,9 @@ const CreateInvoice: React.FC = () => {
         {/* Invoice Form */}
         <div>
           {/* Invoice Header */}
-          <div className="text-center mb-xl">
-            <div className="text-lg text-gray-600 mb-sm">શ્રી ગણેશાય નમઃ</div>
-            <h2 className="text-2xl font-bold text-blue-600 mb-lg">{invoiceData.businessName}</h2>
+                      <div className="text-center mb-xl">
+              <div className="text-lg text-red-900 mb-sm">શ્રી ગણેશાય નમઃ</div>
+            <h2 className="text-2xl font-bold mb-lg text-gray-800" >{invoiceData.businessName}</h2>
           </div>
 
           {/* Client and Invoice Information Table */}
@@ -134,7 +149,8 @@ const CreateInvoice: React.FC = () => {
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Box</th>
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Jodi Total</th>
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Rate</th>
-                  <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Amount</th>
+                  <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700 border-right-none">Amount</th>
+                  <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700 print-hide">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,7 +163,18 @@ const CreateInvoice: React.FC = () => {
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.box}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.jodiTotal}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.rate}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.amount}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 border-right-none"><span className='number-span'>{item.amount}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 print-hide">
+                      <button
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="text-red-600 hover:text-red-800 transition-colors p-1"
+                        title="Delete item"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 {/* Totals Row */}
@@ -158,7 +185,8 @@ const CreateInvoice: React.FC = () => {
                   <td className="border border-blue-300 px-md text-sm text-gray-700">{totals.box}</td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700">{totals.jodiTotal}</td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700">{totals.amount}</td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 border-right-none">{totals.amount}</td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 
                 <tr className="bg-gray-50 font-bold">

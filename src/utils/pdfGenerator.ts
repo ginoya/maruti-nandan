@@ -143,8 +143,15 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
         background-color: #ffffff !important;
       }
 
+      /* Hide elements with print-hide class during PDF generation */
+      .print-hide {
+        display: none !important;
+      }
 
-
+      /* Adjust colspan for Grand Total row since Action column is hidden */
+      .invoice-table tr.bg-gray-50.font-bold td {
+        colSpan: 3 !important;
+      }
       
       /* Header text styling */
       .text-lg {
@@ -277,7 +284,7 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
         vertical-align: top !important;
       }
       .w-56{
-        width: 48.85% !important;
+        width: 49.15% !important;
       }
       
       /* Remove bottom border from last cell of invoice detail table */
@@ -302,6 +309,11 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
         vertical-align: top !important;
         text-align: left !important;
       }
+
+      .border-right-none{
+        border-right: none !important;
+      }
+
     `;
 
     const tempContainer = document.createElement('div');

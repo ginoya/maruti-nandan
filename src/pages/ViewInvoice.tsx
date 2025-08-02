@@ -97,8 +97,8 @@ const ViewInvoice: React.FC = () => {
           <div>
             {/* Invoice Header */}
             <div className="text-center mb-xl">
-              <div className="text-lg text-gray-600 mb-sm">શ્રી ગણેશાય નમઃ</div>
-              <h2 className="text-2xl font-bold text-blue-600 mb-lg">{invoiceData.businessName}</h2>
+              <div className="text-lg text-red-900 mb-sm">શ્રી ગણેશાય નમઃ</div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-lg">{invoiceData.businessName}</h2>
             </div>
 
             {/* Client and Invoice Information Table */}

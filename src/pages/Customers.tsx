@@ -4,7 +4,7 @@ import { Button, Input } from '../components/ui';
 import { addCustomer } from '../services/customerService';
 import { useCustomers } from '../hooks/useCustomers';
 import { useAppDispatch } from '../store/hooks';
-import { addCustomerToState } from '../store/customersSlice';
+import { addCustomerToState, fetchCustomers } from '../store/customersSlice';
 
 const Customers: React.FC = () => {
   const [isAddCustomerModalOpen, setIsAddCustomerModalOpen] = useState(false);
@@ -36,6 +36,9 @@ const Customers: React.FC = () => {
       console.log('Customer added successfully');
       setCustomerName('');
       setIsAddCustomerModalOpen(false);
+      
+      // Fetch customers again to refresh the table
+      dispatch(fetchCustomers());
     } catch (error) {
       console.error('Error adding customer:', error);
       // TODO: Add proper error handling/notification
@@ -113,14 +116,23 @@ const Customers: React.FC = () => {
 
         {/* Add Customer Modal */}
         {isAddCustomerModalOpen && (
-          <div className="fixed inset-0 bg-black bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-strong p-xl w-full max-w-md mx-4">
-              <div>
-                <h3 className="text-lg font-semibold text-secondary-900 mb-lg">
-                  Add Customer
-                </h3>
-                
-                <div className="mb-lg">
+          <div className="fixed inset-0 bg-black bg-black/50 flex items-end justify-center z-50">
+            <div className="bg-white rounded-t-lg shadow-strong px-xl pt-xl py-lg pb-lg w-full transform transition-transform duration-500 ease-out animate-slide-up">
+              <div className="flex justify-between items-center mb-lg">
+                <h2 className="text-xl font-bold text-secondary-900">Add Customer</h2>
+                <button
+                  onClick={handleCancel}
+                  className="text-secondary-400 hover:text-secondary-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={(e) => { e.preventDefault(); handleSaveCustomer(); }} className="space-y-lg">
+                {/* Customer Name */}
+                <div>
                   <label className="block text-sm font-medium text-secondary-700 mb-sm">
                     Customer Name
                   </label>
@@ -133,8 +145,10 @@ const Customers: React.FC = () => {
                   />
                 </div>
 
-                <div className="flex justify-between">
+                {/* Action Buttons */}
+                <div className="flex justify-between pt-md">
                   <Button
+                    type="button"
                     variant="outline"
                     onClick={handleCancel}
                     size='sm'
@@ -142,15 +156,16 @@ const Customers: React.FC = () => {
                     Cancel
                   </Button>
                   <Button
-                    variant="primary"
-                    onClick={handleSaveCustomer}
-                    disabled={!customerName.trim() || isLoading}
+                    type="submit"
+                    variant="gradient"
                     size='sm'
+                    className='px-xl'
+                    disabled={!customerName.trim() || isLoading}
                   >
                     {isLoading ? 'Adding...' : 'Add Customer'}
                   </Button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}
