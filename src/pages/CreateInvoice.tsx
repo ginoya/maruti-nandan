@@ -138,7 +138,7 @@ const CreateInvoice: React.FC = () => {
       </div>
       </div>
       {/* Generate Invoice Button - Sticky at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 flex justify-between items-center px-xs py-lg bg-transparent">
+      <div className="fixed bottom-0 left-0 right-0 flex justify-between items-center px-xs py-lg" style={{ background: 'linear-gradient(to bottom, transparent, white)' }}>
         <div className="flex gap-sm">
           <Button 
             variant="gradient" 
