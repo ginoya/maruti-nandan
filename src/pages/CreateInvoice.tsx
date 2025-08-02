@@ -8,10 +8,11 @@ import type { EditInvoiceData } from '../components/EditInvoiceModal';
 import AddInvoiceItemModal from '../components/AddInvoiceItemModal';
 import type { AddInvoiceItemData } from '../components/AddInvoiceItemModal';
 import { useInvoice } from '../hooks/useInvoice';
-import { invoiceService } from '../services/invoiceService';
+import { useInvoices } from '../hooks/useInvoices';
 
 const CreateInvoice: React.FC = () => {
   const { invoiceData, calculateTotals, updateDetails, addItem } = useInvoice();
+  const { saveInvoiceToFirebase } = useInvoices();
 
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -73,15 +74,19 @@ const CreateInvoice: React.FC = () => {
 
   const handleGenerateInvoice = async () => {
     try {
-      // First save the invoice to Firebase
-      const invoiceId = await invoiceService.saveInvoice(invoiceData);
-      console.log('Invoice saved to Firebase with ID:', invoiceId);
-      
-      // Then generate the PDF
-      await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate.replace(/\//g, '-')}.pdf`);
-      
-      // You can add a success toast notification here
-      console.log('Invoice saved and PDF generated successfully');
+      // First save the invoice to Firebase using Redux
+      const success = await saveInvoiceToFirebase(invoiceData);
+      if (success) {
+        console.log('Invoice saved to Firebase successfully');
+        
+        // Then generate the PDF
+        await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate.replace(/\//g, '-')}.pdf`);
+        
+        // You can add a success toast notification here
+        console.log('Invoice saved and PDF generated successfully');
+      } else {
+        console.error('Failed to save invoice to Firebase');
+      }
     } catch (error) {
       console.error('Failed to save invoice or generate PDF:', error);
       // You can add an error toast notification here

@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import PedhisProvider from './components/PedhisProvider'
 import CustomersProvider from './components/CustomersProvider'
+import InvoicesProvider from './components/InvoicesProvider'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Invoice from './pages/Invoice'
@@ -21,7 +22,8 @@ function App() {
     <AuthProvider>
       <PedhisProvider>
         <CustomersProvider>
-          <Router>
+          <InvoicesProvider>
+            <Router>
           <Routes>
           {/* Public Routes */}
           <Route path="/login" element={
@@ -83,6 +85,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      </InvoicesProvider>
       </CustomersProvider>
       </PedhisProvider>
     </AuthProvider>
