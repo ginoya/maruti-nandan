@@ -20,7 +20,7 @@ const CreateInvoice: React.FC = () => {
     clientName: 'GNG',
     invoiceNo: '5',
     invoiceDate: '25/07/2025',
-    items: Array.from({ length: 28 }, (_, index) => {
+    items: Array.from({ length: 25 }, (_, index) => {
       let tempBox = Math.floor(Math.random() * 30) + 10;
       let tempRate = Math.floor(Math.random() * 5) + 10;
        return{
@@ -78,13 +78,13 @@ const CreateInvoice: React.FC = () => {
             <table className="w-full border-collapse border border-blue-300 invoice-detail-table">
               <tbody>
                 <tr>
-                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 font-medium" colSpan={2} rowSpan={2}>{`M/S. : ${invoiceData.clientName}`}</td>
-                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 font-medium">Invoice No.:</td>
-                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700">{invoiceData.invoiceNo}</td>
+                  <td style={{ width : "36%"}} className="border border-blue-300 px-md py-sm text-sm text-gray-700 font-medium w-56 left-top-align" colSpan={2} rowSpan={2}>{`M/S. : ${invoiceData.clientName}`}</td>
+                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 font-medium w-22"><span className='number-span-bold'>Invoice No.:</span></td>
+                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 w-22"><span className='number-span-bold'>{invoiceData.invoiceNo}</span></td>
                 </tr>
                 <tr>
-                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 font-medium">Invoice Date:</td>
-                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700" colSpan={1}>{invoiceData.invoiceDate}</td>
+                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 font-medium"><span className='number-span-bold'>Invoice Date:</span></td>
+                  <td className="border border-blue-300 px-md py-sm text-sm text-gray-700" colSpan={1}><span className='number-span-bold'>{invoiceData.invoiceDate}</span></td>
                 </tr>
               </tbody>
             </table>

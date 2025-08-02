@@ -138,10 +138,12 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
       
       /* Apply our specific styles */
       .print-this {
-        border: 1px solid #000000 !important;
-        margin: 0 !important;
+        border: 2px solid #000000 !important;
+        margin: 10px !important;
         background-color: #ffffff !important;
       }
+
+
 
       
       /* Header text styling */
@@ -237,6 +239,12 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
         display: inline-block !important;
       }
       
+      .number-span-bold{
+        margin-top: -10px !important;
+        display: inline-block !important;
+        font-weight: bold !important;
+      }
+      
       /* Invoice table specific styling */
       .invoice-table{
         tbody{
@@ -253,19 +261,23 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
       /* Invoice detail table styling */
       .invoice-detail-table th,
       .invoice-detail-table td {
-        width: 25% !important;
         padding: 6px !important;
         font-size: 11px !important;
+        font-weight: bold !important;
       }
+
+
       
       /* First cell in invoice detail table - 50% width */
-      .invoice-detail-table th:first-child,
-      .invoice-detail-table td:first-child {
+      .invoice-detail-table th:first-child{
         width: 56.85% !important;
         text-align: left !important;
         font-size: 13px !important;
         font-weight: bold !important;
         vertical-align: top !important;
+      }
+      .w-56{
+        width: 48.85% !important;
       }
       
       /* Remove bottom border from last cell of invoice detail table */
@@ -284,6 +296,11 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
 
       .invoice-table thead tr{
         height: 30px !important;
+      }
+
+      .left-top-align{
+        vertical-align: top !important;
+        text-align: left !important;
       }
     `;
 
