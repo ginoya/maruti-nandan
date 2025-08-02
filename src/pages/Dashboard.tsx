@@ -34,14 +34,6 @@ const Dashboard: React.FC = () => {
                     Profile
                   </Button>
                 </Link>
-                <Link to="/dashboard/settings">
-                  <Button 
-                    variant={isActive('/dashboard/settings') ? 'primary' : 'ghost'}
-                    size="sm"
-                  >
-                    Settings
-                  </Button>
-                </Link>
               </div>
             </div>
             <Link to="/">

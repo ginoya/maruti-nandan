@@ -16,9 +16,8 @@ const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { label: 'Dashboard', path: '/home', icon: '📊' },
     { label: 'Invoice', path: '/invoice', icon: '📄' },
+    { label: 'Customers', path: '/customers', icon: '👥' },
     { label: 'Payments', path: '/payments', icon: '💳' },
-    { label: 'Components', path: '/components', icon: '🧩' },
-    { label: 'Settings', path: '/settings', icon: '⚙️' },
   ];
 
   const handleLogout = async () => {

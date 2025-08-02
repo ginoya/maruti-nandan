@@ -62,16 +62,6 @@ const DashboardOverview: React.FC = () => {
                 Edit Profile
               </Button>
             </Link>
-            <Link to="/dashboard/settings">
-              <Button variant="outline" className="w-full">
-                Settings
-              </Button>
-            </Link>
-            <Link to="/components">
-              <Button variant="outline" className="w-full">
-                View Components
-              </Button>
-            </Link>
             <Button variant="outline" className="w-full">
               Download Report
             </Button>
