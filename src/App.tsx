@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Invoice from './pages/Invoice'
 import CreateInvoice from './pages/CreateInvoice'
 import ViewInvoice from './pages/ViewInvoice'
+import CustomerDetails from './pages/CustomerDetails'
 import Customers from './pages/Customers'
 import Payments from './pages/Payments'
 import Dashboard from './pages/Dashboard'
@@ -66,6 +67,11 @@ function App() {
           <Route path="/customers" element={
             <ProtectedRoute>
               <Customers />
+            </ProtectedRoute>
+          } />
+          <Route path="/customer/:customerName" element={
+            <ProtectedRoute>
+              <CustomerDetails />
             </ProtectedRoute>
           } />
           

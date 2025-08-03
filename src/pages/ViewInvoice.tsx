@@ -47,7 +47,7 @@ const ViewInvoice: React.FC = () => {
     if (!invoiceData) return;
 
     try {
-      await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate.replace(/\//g, '-')}.pdf`);
+              await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate}.pdf`);
       console.log('PDF generated successfully');
     } catch (error) {
       console.error('Failed to generate PDF:', error);

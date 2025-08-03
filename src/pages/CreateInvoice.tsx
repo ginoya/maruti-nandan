@@ -68,9 +68,9 @@ const CreateInvoice: React.FC = () => {
       customer: data.customer,
       invoiceNo: data.invoiceNumber,
       invoiceDate: (() => {
-        // Convert YYYY-MM-DD to DD/MM/YYYY format
+        // Convert YYYY-MM-DD to DD-MM-YYYY format
         const [year, month, day] = data.date.split('-');
-        return `${day}/${month}/${year}`;
+        return `${day}-${month}-${year}`;
       })()
     });
     setIsEditModalOpen(false);
@@ -89,7 +89,7 @@ const CreateInvoice: React.FC = () => {
         refetch();
         
         // Then generate the PDF
-        await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate.replace(/\//g, '-')}.pdf`);
+        await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate}.pdf`);
         
         // You can add a success toast notification here
         console.log('Invoice saved and PDF generated successfully');
@@ -240,8 +240,8 @@ const CreateInvoice: React.FC = () => {
            customer: '',
            invoiceNumber: invoiceData.invoiceNo,
            date: (() => {
-             // Convert DD/MM/YYYY to YYYY-MM-DD format
-             const [day, month, year] = invoiceData.invoiceDate.split('/');
+             // Convert DD-MM-YYYY to YYYY-MM-DD format
+             const [day, month, year] = invoiceData.invoiceDate.split('-');
              return `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`;
            })()
          }}

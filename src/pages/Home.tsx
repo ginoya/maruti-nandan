@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import Navigation from '../components/Navigation';
 import { fetchInvoices } from '../store/invoicesSlice';
 import { fetchPayments } from '../store/paymentsSlice';
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { invoices, loading: invoicesLoading } = useAppSelector((state) => state.invoices);
   const { data: payments, loading: paymentsLoading } = useAppSelector((state) => state.payments);
@@ -81,6 +83,10 @@ const Home: React.FC = () => {
     }).format(amount);
   };
 
+  const handleCustomerClick = (customerName: string) => {
+    navigate(`/customer/${encodeURIComponent(customerName)}`);
+  };
+
   const isLoading = invoicesLoading || paymentsLoading;
 
   return (
@@ -143,9 +149,16 @@ const Home: React.FC = () => {
                 {Object.entries(customerMetrics)
                   .sort(([, a], [, b]) => b.totalTurnover - a.totalTurnover) // Sort by turnover descending
                   .map(([customerName, metrics]) => (
-                    <div key={customerName} className="bg-white rounded-lg shadow-sm border border-gray-100 p-lg">
+                    <div 
+                      key={customerName} 
+                      className="bg-white rounded-lg shadow-sm border border-gray-100 p-lg cursor-pointer hover:shadow-md transition-shadow"
+                      onClick={() => handleCustomerClick(customerName)}
+                    >
                       <div className="flex items-center justify-between mb-md">
-                        <h4 className="font-semibold text-secondary-900 text-lg">{customerName}</h4>
+                        <div className="flex items-center gap-sm">
+                          <h4 className="font-semibold text-secondary-900 text-lg">{customerName}</h4>
+                          <span className="text-primary-500 text-sm">→</span>
+                        </div>
                         <div className="text-right">
                           <div className="text-xs text-secondary-600 mb-xs">Turnover</div>
                           <div className="text-lg font-bold text-primary-600">

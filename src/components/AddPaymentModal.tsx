@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Dropdown, DatePicker } from './ui';
 import { useAppSelector } from '../store/hooks';
+import { formatDateToDDMMYYYY } from '../utils/dateUtils';
 
 interface AddPaymentModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export interface AddPaymentData {
   customerName: string;
   paymentDate: string;
   amount: number;
+  notes: string;
 }
 
 const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ 
@@ -28,7 +30,8 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
     customerId: '',
     customerName: '',
     paymentDate: '',
-    amount: 0
+    amount: 0,
+    notes: ''
   });
 
   // Local state for input display (to show empty strings instead of 0)
@@ -46,7 +49,8 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
         customerId: '',
         customerName: '',
         paymentDate: '',
-        amount: 0
+        amount: 0,
+        notes: ''
       });
       // Reset input display values
       setInputValues({
@@ -56,7 +60,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   };
 
   const handleInputChange = (field: keyof AddPaymentData, value: string | number) => {
-    if (field === 'customerId' || field === 'customerName' || field === 'paymentDate') {
+    if (field === 'customerId' || field === 'customerName' || field === 'paymentDate' || field === 'notes') {
       // Handle string fields directly
       setFormData(prev => ({
         ...prev,
@@ -84,8 +88,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   const handleDateChange = (value: string) => {
     // Convert yyyy-mm-dd to dd-mm-yyyy format
     if (value) {
-      const [year, month, day] = value.split('-');
-      const formattedDate = `${day}-${month}-${year}`;
+      const formattedDate = formatDateToDDMMYYYY(value);
       handleInputChange('paymentDate', formattedDate);
     } else {
       handleInputChange('paymentDate', '');
@@ -179,6 +182,19 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
               required
               min="0"
               step="0.01"
+            />
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-secondary-700 mb-sm">
+              Notes
+            </label>
+            <Input
+              type="text"
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              placeholder="Enter notes (optional)"
             />
           </div>
 

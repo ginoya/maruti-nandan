@@ -6,6 +6,7 @@ export interface PaymentData {
   customerName: string;
   paymentDate: string;
   amount: number;
+  notes: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

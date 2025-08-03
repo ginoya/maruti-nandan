@@ -31,7 +31,8 @@ const Payments: React.FC = () => {
         customerId: data.customerId,
         customerName: data.customerName,
         paymentDate: data.paymentDate,
-        amount: data.amount
+        amount: data.amount,
+        notes: data.notes
       })).unwrap();
       
       console.log('Payment added successfully:', data);
@@ -94,12 +95,15 @@ const Payments: React.FC = () => {
                       <th className="px-md py-sm text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Payment Date
                       </th>
+                      <th className="px-md py-sm text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Notes
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {payments.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="px-md py-lg text-center text-gray-500">
+                        <td colSpan={4} className="px-md py-lg text-center text-gray-500">
                           No payments found. Add your first payment using the button below.
                         </td>
                       </tr>
@@ -119,6 +123,11 @@ const Payments: React.FC = () => {
                           <td className="px-md py-sm whitespace-nowrap">
                             <div className="text-sm text-gray-900">
                               {payment.paymentDate}
+                            </div>
+                          </td>
+                          <td className="px-md py-sm whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {payment.notes || '-'}
                             </div>
                           </td>
                         </tr>

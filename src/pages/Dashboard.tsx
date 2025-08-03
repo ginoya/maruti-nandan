@@ -37,8 +37,8 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
             <Link to="/">
-              <Button variant="outline" size="sm">
-                ← Back to Home
+              <Button variant="ghost" size="sm">
+                ← Back
               </Button>
             </Link>
           </div>
