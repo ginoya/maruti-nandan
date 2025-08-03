@@ -115,8 +115,8 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
   if (!isOpen && !isClosing) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-black/50 flex items-end justify-center z-50">
-      <div className="bg-white rounded-t-lg shadow-strong px-xl pt-xl py-lg pb-lg w-full transform transition-transform duration-500 ease-out animate-slide-up">
+    <div className="fixed inset-0 bg-black bg-black/50 flex items-center justify-center z-50 p-md">
+      <div className="bg-white rounded-lg shadow-strong px-xl pt-xl py-lg pb-lg w-full max-w-md max-h-[90vh] overflow-y-auto transform transition-transform duration-500 ease-out animate-slide-up">
         <div className="flex justify-between items-center mb-lg">
           <h2 className="text-xl font-bold text-secondary-900">Add Invoice Item</h2>
           <button

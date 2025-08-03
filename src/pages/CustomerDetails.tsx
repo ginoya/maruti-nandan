@@ -132,7 +132,7 @@ const CustomerDetails: React.FC = () => {
         <div className="mb-lg">
           <Button 
             variant="ghost" 
-            size="sm" 
+            size="sm"
             onClick={() => navigate('/')}
             className="mb-md"
           >

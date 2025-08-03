@@ -146,7 +146,7 @@ const Customers: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-between pt-md">
+                <div className="flex justify-between pt-xl" style={{paddingTop: '10px'}}>
                   <Button
                     type="button"
                     variant="outline"
