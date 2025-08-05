@@ -1,5 +1,6 @@
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { convertFirebaseArray, convertFirebaseData } from '../utils/firebaseUtils';
 
 export interface PaymentData {
   customerId: string;
@@ -7,8 +8,8 @@ export interface PaymentData {
   paymentDate: string;
   amount: number;
   notes: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface FirebasePaymentData extends PaymentData {
@@ -21,8 +22,8 @@ export const paymentService = {
     try {
       const paymentWithTimestamps: FirebasePaymentData = {
         ...paymentData,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
       const docRef = await addDoc(collection(db, 'payments'), paymentWithTimestamps);
@@ -51,7 +52,8 @@ export const paymentService = {
         }
       });
       
-      return payments;
+      // Convert Firebase Timestamps to serializable Date objects
+      return convertFirebaseArray(payments);
     } catch (error) {
       console.error('Error getting payments:', error);
       throw error;
@@ -70,10 +72,13 @@ export const paymentService = {
         if (data.isDeleted) {
           return null; // Return null for soft deleted payments
         }
-        return {
+        const payment = {
           id: docSnap.id,
           ...data
         } as FirebasePaymentData;
+        
+        // Convert Firebase Timestamps to serializable Date objects
+        return convertFirebaseData(payment);
       } else {
         return null;
       }
@@ -89,7 +94,7 @@ export const paymentService = {
       const docRef = doc(db, 'payments', id);
       await updateDoc(docRef, {
         ...paymentData,
-        updatedAt: new Date()
+        updatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error('Error updating payment:', error);
@@ -103,8 +108,8 @@ export const paymentService = {
       const docRef = doc(db, 'payments', id);
       await updateDoc(docRef, {
         isDeleted: true,
-        deletedAt: new Date(),
-        updatedAt: new Date()
+        deletedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error('Error soft deleting payment:', error);

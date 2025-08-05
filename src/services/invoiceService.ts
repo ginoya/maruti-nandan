@@ -1,12 +1,13 @@
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import type { InvoiceData } from '../store/invoiceSlice';
+import { convertFirebaseArray, convertFirebaseData } from '../utils/firebaseUtils';
 
 export interface FirebaseInvoiceData extends InvoiceData {
   id?: string;
   grandTotal?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface InvoiceCounter {
@@ -89,8 +90,8 @@ export const invoiceService = {
       const invoiceWithTimestamps: FirebaseInvoiceData = {
         ...invoiceData,
         grandTotal,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
       const docRef = await addDoc(collection(db, 'invoices'), invoiceWithTimestamps);
@@ -123,7 +124,8 @@ export const invoiceService = {
         }
       });
       
-      return invoices;
+      // Convert Firebase Timestamps to serializable Date objects
+      return convertFirebaseArray(invoices);
     } catch (error) {
       console.error('Error getting invoices:', error);
       throw error;
@@ -142,10 +144,13 @@ export const invoiceService = {
         if (data.isDeleted) {
           return null; // Return null for soft deleted invoices
         }
-        return {
+        const invoice = {
           id: docSnap.id,
           ...data
         } as FirebaseInvoiceData;
+        
+        // Convert Firebase Timestamps to serializable Date objects
+        return convertFirebaseData(invoice);
       } else {
         return null;
       }
@@ -161,7 +166,7 @@ export const invoiceService = {
       const docRef = doc(db, 'invoices', id);
       await updateDoc(docRef, {
         ...invoiceData,
-        updatedAt: new Date()
+        updatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error('Error updating invoice:', error);
@@ -175,8 +180,8 @@ export const invoiceService = {
       const docRef = doc(db, 'invoices', id);
       await updateDoc(docRef, {
         isDeleted: true,
-        deletedAt: new Date(),
-        updatedAt: new Date()
+        deletedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error('Error soft deleting invoice:', error);

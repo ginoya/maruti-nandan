@@ -4,8 +4,8 @@ import { getCustomers } from '../services/customerService';
 export interface Customer {
   id: string;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface CustomersState {

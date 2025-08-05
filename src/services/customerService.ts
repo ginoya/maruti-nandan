@@ -1,11 +1,12 @@
 import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
+import { convertFirebaseArray } from '../utils/firebaseUtils';
 
 export interface Customer {
   id?: string;
   name: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Add a new customer to the customers collection
@@ -14,8 +15,8 @@ export const addCustomer = async (customerData: Omit<Customer, 'id' | 'createdAt
     const customersCollection = collection(db, 'customers');
     const newCustomer = {
       ...customerData,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     
     const docRef = await addDoc(customersCollection, newCustomer);
@@ -38,7 +39,8 @@ export const getCustomers = async (): Promise<Customer[]> => {
       ...doc.data()
     })) as Customer[];
     
-    return customers;
+    // Convert Firebase Timestamps to serializable Date objects
+    return convertFirebaseArray(customers);
   } catch (error) {
     console.error('Error fetching customers:', error);
     throw new Error('Failed to fetch customers');
