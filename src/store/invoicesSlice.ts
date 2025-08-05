@@ -31,6 +31,15 @@ export const saveInvoice = createAsyncThunk(
   }
 );
 
+// Async thunk to soft delete invoice
+export const softDeleteInvoice = createAsyncThunk(
+  'invoices/softDeleteInvoice',
+  async (invoiceId: string) => {
+    await invoiceService.softDeleteInvoice(invoiceId);
+    return invoiceId;
+  }
+);
+
 const invoicesSlice = createSlice({
   name: 'invoices',
   initialState,
@@ -79,6 +88,17 @@ const invoicesSlice = createSlice({
       .addCase(saveInvoice.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to save invoice';
+      })
+      // Soft delete invoice
+      .addCase(softDeleteInvoice.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(softDeleteInvoice.fulfilled, (state, action) => {
+        // Remove the invoice from the state
+        state.invoices = state.invoices.filter(invoice => invoice.id !== action.payload);
+      })
+      .addCase(softDeleteInvoice.rejected, (state, action) => {
+        state.error = action.error.message || 'Failed to delete invoice';
       });
   }
 });

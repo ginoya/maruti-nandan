@@ -8,17 +8,20 @@ import EditInvoiceModal from '../components/EditInvoiceModal';
 import type { EditInvoiceData } from '../components/EditInvoiceModal';
 import AddInvoiceItemModal from '../components/AddInvoiceItemModal';
 import type { AddInvoiceItemData } from '../components/AddInvoiceItemModal';
+import EditInvoiceItemModal from '../components/EditInvoiceItemModal';
 import { useInvoice } from '../hooks/useInvoice';
 import { useInvoices } from '../hooks/useInvoices';
 
 const CreateInvoice: React.FC = () => {
-  const { invoiceData, calculateTotals, updateDetails, addItem, removeItem, reset } = useInvoice();
+  const { invoiceData, calculateTotals, updateDetails, addItem, removeItem, updateItem, reset } = useInvoice();
   const { saveInvoiceToFirebase, refetch } = useInvoices();
   const navigate = useNavigate();
 
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
+  const [isEditItemModalOpen, setIsEditItemModalOpen] = useState(false);
+  const [selectedItemForEdit, setSelectedItemForEdit] = useState<AddInvoiceItemData | null>(null);
 
   const handleEditInvoice = () => {
     setIsEditModalOpen(true);
@@ -52,6 +55,46 @@ const CreateInvoice: React.FC = () => {
 
   const handleDeleteItem = (id: number) => {
     removeItem(id);
+  };
+
+  const handleEditItem = (item: any) => {
+    setSelectedItemForEdit({
+      particular: item.particular,
+      jodi: item.jodi,
+      box: item.box,
+      jodiTotal: item.jodiTotal,
+      rate: item.rate,
+      amount: item.amount
+    });
+    setIsEditItemModalOpen(true);
+  };
+
+  const handleCloseEditItemModal = () => {
+    setIsEditItemModalOpen(false);
+    setSelectedItemForEdit(null);
+  };
+
+  const handleSaveEditItemModal = (data: AddInvoiceItemData) => {
+    if (selectedItemForEdit) {
+      // Find the item by matching the data
+      const itemToUpdate = invoiceData.items.find(item => 
+        item.particular === selectedItemForEdit.particular &&
+        item.jodi === selectedItemForEdit.jodi &&
+        item.box === selectedItemForEdit.box &&
+        item.rate === selectedItemForEdit.rate
+      );
+      
+      if (itemToUpdate) {
+        updateItem(itemToUpdate.id, {
+          particular: data.particular,
+          jodi: data.jodi,
+          box: data.box,
+          jodiTotal: data.jodiTotal,
+          rate: data.rate,
+          amount: data.amount
+        });
+      }
+    }
   };
 
   useEffect(() => {
@@ -165,15 +208,26 @@ const CreateInvoice: React.FC = () => {
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.rate}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 border-right-none"><span className='number-span'>{item.amount}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 print-hide">
-                      <button
-                        onClick={() => handleDeleteItem(item.id)}
-                        className="text-red-600 hover:text-red-800 transition-colors p-1"
-                        title="Delete item"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
+                      <div className="flex gap-sm">
+                        <button
+                          onClick={() => handleEditItem(item)}
+                          className="text-blue-600 hover:text-blue-800 transition-colors p-1"
+                          title="Edit item"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(item.id)}
+                          className="text-red-600 hover:text-red-800 transition-colors p-1"
+                          title="Delete item"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -248,13 +302,28 @@ const CreateInvoice: React.FC = () => {
        />
 
        {/* Add Invoice Item Modal */}
-       <AddInvoiceItemModal
+              <AddInvoiceItemModal
          isOpen={isAddItemModalOpen}
          onClose={handleCloseAddItemModal}
          onSave={handleSaveAddItemModal}
        />
+
+       {/* Edit Invoice Item Modal */}
+       <EditInvoiceItemModal
+         isOpen={isEditItemModalOpen}
+         onClose={handleCloseEditItemModal}
+         onSave={handleSaveEditItemModal}
+         initialData={selectedItemForEdit || {
+           particular: '',
+           jodi: 0,
+           box: 0,
+           jodiTotal: 0,
+           rate: 0,
+           amount: 0
+         }}
+       />
      </div>
    );
  };
-
-export default CreateInvoice; 
+ 
+ export default CreateInvoice; 

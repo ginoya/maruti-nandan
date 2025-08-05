@@ -3,7 +3,8 @@ import Navigation from '../components/Navigation';
 import { Button, Tab, TabList, TabItem, TabPanel } from '../components/ui';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchInvoices } from '../store/invoicesSlice';
+import { fetchInvoices, softDeleteInvoice } from '../store/invoicesSlice';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 interface GroupedInvoices {
   [businessName: string]: {
@@ -20,6 +21,9 @@ const Invoice: React.FC = () => {
   const dispatch = useAppDispatch();
   const { invoices, loading, error } = useAppSelector((state) => state.invoices);
   const [activeTab, setActiveTab] = useState(0);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: string; invoiceNo: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchInvoices());
@@ -27,6 +31,36 @@ const Invoice: React.FC = () => {
 
   const handleCreateInvoice = () => {
     navigate('/invoice/new');
+  };
+
+  const handleDeleteClick = (invoiceId: string, invoiceNo: string) => {
+    setInvoiceToDelete({ id: invoiceId, invoiceNo });
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!invoiceToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      // Delete the invoice
+      await dispatch(softDeleteInvoice(invoiceToDelete.id)).unwrap();
+      
+      // Fetch fresh data from database
+      await dispatch(fetchInvoices()).unwrap();
+      
+      setDeleteModalOpen(false);
+      setInvoiceToDelete(null);
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setInvoiceToDelete(null);
   };
 
   // Group invoices by business name
@@ -49,13 +83,15 @@ const Invoice: React.FC = () => {
     return acc;
   }, {} as GroupedInvoices);
 
-  if (loading) {
+  if (loading || isDeleting) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
         <Navigation />
         <div className="max-w-7xl mx-auto p-xl">
           <div className="flex justify-center items-center h-64">
-            <div className="text-lg text-gray-600">Loading invoices...</div>
+            <div className="text-lg text-gray-600">
+              {isDeleting ? 'Deleting invoice and refreshing data...' : 'Loading invoices...'}
+            </div>
           </div>
         </div>
       </div>
@@ -133,14 +169,27 @@ const Invoice: React.FC = () => {
                           </td>
                           <td className="p-md text-gray-600">{invoice.invoiceDate}</td>
                           <td className="p-md text-center">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => invoice.id && navigate(`/invoice/${invoice.id}`)}
-                              className="px-sm py-xs text-xs"
-                            >
-                              View
-                            </Button>
+                            <div className="flex gap-sm justify-center">
+                              <button
+                                onClick={() => invoice.id && navigate(`/invoice/${invoice.id}`)}
+                                className="p-sm text-secondary-600 hover:text-secondary-800 hover:bg-secondary-100 rounded-lg transition-colors"
+                                title="View Invoice"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => invoice.id && handleDeleteClick(invoice.id, invoice.invoiceNo)}
+                                className="p-sm text-error-600 hover:text-error-800 hover:bg-error-100 rounded-lg transition-colors"
+                                title="Delete Invoice"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -164,6 +213,16 @@ const Invoice: React.FC = () => {
          </Tab>
        )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Invoice"
+        message={`Are you sure you want to delete invoice ${invoiceToDelete?.invoiceNo}? This action cannot be undone.`}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

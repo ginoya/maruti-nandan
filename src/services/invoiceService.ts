@@ -32,7 +32,7 @@ export const invoiceService = {
     }
   },
 
-  // Get all invoices
+  // Get all invoices (excluding soft deleted ones)
   async getAllInvoices(): Promise<FirebaseInvoiceData[]> {
     try {
       const q = query(collection(db, 'invoices'), orderBy('createdAt', 'desc'));
@@ -40,10 +40,14 @@ export const invoiceService = {
       const invoices: FirebaseInvoiceData[] = [];
       
       querySnapshot.forEach((doc) => {
-        invoices.push({
-          id: doc.id,
-          ...doc.data()
-        } as FirebaseInvoiceData);
+        const data = doc.data();
+        // Filter out soft deleted invoices
+        if (!data.isDeleted) {
+          invoices.push({
+            id: doc.id,
+            ...data
+          } as FirebaseInvoiceData);
+        }
       });
       
       return invoices;
@@ -53,16 +57,21 @@ export const invoiceService = {
     }
   },
 
-  // Get invoice by ID
+  // Get invoice by ID (excluding soft deleted ones)
   async getInvoiceById(id: string): Promise<FirebaseInvoiceData | null> {
     try {
       const docRef = doc(db, 'invoices', id);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
+        const data = docSnap.data();
+        // Check if invoice is soft deleted
+        if (data.isDeleted) {
+          return null; // Return null for soft deleted invoices
+        }
         return {
           id: docSnap.id,
-          ...docSnap.data()
+          ...data
         } as FirebaseInvoiceData;
       } else {
         return null;
@@ -88,7 +97,23 @@ export const invoiceService = {
     }
   },
 
-  // Delete invoice
+  // Soft delete invoice
+  async softDeleteInvoice(id: string): Promise<void> {
+    try {
+      const docRef = doc(db, 'invoices', id);
+      await updateDoc(docRef, {
+        isDeleted: true,
+        deletedAt: new Date(),
+        updatedAt: new Date()
+      });
+      console.log('Invoice soft deleted successfully');
+    } catch (error) {
+      console.error('Error soft deleting invoice:', error);
+      throw error;
+    }
+  },
+
+  // Hard delete invoice (keeping for reference)
   async deleteInvoice(id: string): Promise<void> {
     try {
       const docRef = doc(db, 'invoices', id);
