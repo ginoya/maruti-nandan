@@ -1,4 +1,5 @@
 import html2pdf from 'html2pdf.js';
+import { type FirebasePaymentData } from '../services/paymentService';
 
 export interface PDFOptions {
   filename?: string;
@@ -372,6 +373,266 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
     }
   } catch (error) {
     console.error('Error generating PDF:', error);
+    throw error;
+  }
+}; 
+
+export const generateCustomerPaymentsPDF = async (
+  customerName: string,
+  payments: FirebasePaymentData[],
+  filename?: string
+): Promise<void> => {
+  try {
+    // Create a temporary container for PDF generation
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.backgroundColor = '#ffffff';
+    tempContainer.style.fontFamily = 'Arial, sans-serif';
+    tempContainer.style.fontSize = '12px';
+    tempContainer.style.color = '#000000';
+
+    // Create the PDF content
+    const pdfContent = document.createElement('div');
+    pdfContent.className = 'print-this';
+    pdfContent.style.border = '2px solid #000000';
+    pdfContent.style.padding = '10px 0 0 0';
+    pdfContent.style.backgroundColor = '#ffffff';
+
+    // Header
+    const header = document.createElement('div');
+    header.style.textAlign = 'center';
+    header.style.marginBottom = '15px';
+    header.style.borderBottom = '2px solid #000000';
+    header.style.paddingBottom = '10px';
+
+    const companyName = document.createElement('h1');
+    companyName.textContent = 'MARUTI NANDAN IMITATION';
+    companyName.style.fontSize = '18px';
+    companyName.style.fontWeight = 'bold';
+    companyName.style.margin = '0 0 10px 0';
+    companyName.style.color = '#000000';
+
+    // Customer info row with left alignment and date on right
+    const customerInfoRow = document.createElement('div');
+    customerInfoRow.style.display = 'flex';
+    customerInfoRow.style.justifyContent = 'space-between';
+    customerInfoRow.style.alignItems = 'center';
+    customerInfoRow.style.margin = '0';
+
+    const customerNameElement = document.createElement('h2');
+    customerNameElement.textContent = `M/S: ${customerName}`;
+    customerNameElement.style.fontSize = '14px';
+    customerNameElement.style.fontWeight = 'bold';
+    customerNameElement.style.margin = '0';
+    customerNameElement.style.color = '#000000';
+    customerNameElement.style.textAlign = 'left';
+    customerNameElement.style.borderLeft = 'none';
+    customerNameElement.style.paddingLeft = '10px';
+
+    const currentDate = document.createElement('span');
+    currentDate.textContent = new Date().toLocaleDateString('en-IN');
+    currentDate.style.fontSize = '14px';
+    currentDate.style.fontWeight = 'bold';
+    currentDate.style.color = '#000000';
+    currentDate.style.paddingRight = '10px';
+
+    customerInfoRow.appendChild(customerNameElement);
+    customerInfoRow.appendChild(currentDate);
+
+    header.appendChild(companyName);
+    header.appendChild(customerInfoRow);
+
+    // Table
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.marginTop = '10px';
+    table.style.marginBottom = '0';
+    table.style.marginLeft = '0';
+    table.style.marginRight = '0';
+    table.style.borderTop = '1px solid #000000';
+    table.style.borderLeft = 'none';
+    table.style.borderRight = 'none';
+    table.style.borderBottom = 'none';
+
+    // Table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headerRow.style.backgroundColor = '#f0f0f0';
+    headerRow.style.fontWeight = 'bold';
+
+    const headers = ['Sr. No.', 'Payment Amount', 'Payment Date'];
+    headers.forEach((headerText, index) => {
+      const th = document.createElement('th');
+      th.textContent = headerText;
+      th.style.borderTop = '1px solid #000000';
+      // th.style.borderLeft = 'none';
+      th.style.borderLeft = index === 1 ? '1px solid #000000' : 'none';
+      th.style.borderRight = index === 1 ? '1px solid #000000' : 'none';
+      // th.style.borderBottom = 'none';
+      th.style.padding = '6px';
+      th.style.textAlign = 'center';
+      th.style.fontWeight = 'bold';
+      th.style.backgroundColor = '#f0f0f0';
+      headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Table body
+    const tbody = document.createElement('tbody');
+    payments.forEach((payment, index) => {
+      const row = document.createElement('tr');
+      
+      // Sr. No.
+      const srNoCell = document.createElement('td');
+      srNoCell.textContent = (index + 1).toString();
+      srNoCell.style.borderTop = '1px solid #000000';
+      srNoCell.style.borderLeft = 'none';
+      srNoCell.style.borderRight = 'none';
+      srNoCell.style.borderBottom = 'none';
+      srNoCell.style.padding = '6px';
+      srNoCell.style.textAlign = 'center';
+      
+      // Payment Amount
+      const amountCell = document.createElement('td');
+      amountCell.textContent = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+      }).format(payment.amount);
+      amountCell.style.borderTop = '1px solid #000000';
+      amountCell.style.borderLeft = '1px solid #000000';
+      amountCell.style.borderRight = '1px solid #000000';
+      amountCell.style.borderBottom = 'none';
+      amountCell.style.padding = '6px';
+      amountCell.style.textAlign = 'right';
+      
+      // Payment Date
+      const dateCell = document.createElement('td');
+      dateCell.textContent = payment.paymentDate;
+      dateCell.style.borderTop = '1px solid #000000';
+      dateCell.style.borderLeft = 'none';
+      dateCell.style.borderRight = 'none';
+      dateCell.style.borderBottom = 'none';
+      dateCell.style.padding = '6px';
+      dateCell.style.textAlign = 'center';
+      
+      row.appendChild(srNoCell);
+      row.appendChild(amountCell);
+      row.appendChild(dateCell);
+      tbody.appendChild(row);
+    });
+
+    // Total row
+    const totalRow = document.createElement('tr');
+    totalRow.style.backgroundColor = '#f8f8f8';
+    totalRow.style.fontWeight = 'bold';
+    
+    const totalLabelCell = document.createElement('td');
+    totalLabelCell.textContent = 'Total';
+    totalLabelCell.style.borderTop = '1px solid #000000';
+    totalLabelCell.style.borderLeft = 'none';
+    totalLabelCell.style.borderRight = 'none';
+    totalLabelCell.style.borderBottom = 'none';
+    totalLabelCell.style.padding = '6px';
+    totalLabelCell.style.textAlign = 'center';
+    totalLabelCell.style.fontWeight = 'bold';
+    totalLabelCell.style.backgroundColor = '#f8f8f8';
+    
+    const totalAmountCell = document.createElement('td');
+    const totalAmount = payments.reduce((sum, payment) => sum + payment.amount, 0);
+    totalAmountCell.textContent = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+    }).format(totalAmount);
+    totalAmountCell.style.borderTop = '1px solid #000000';
+    totalAmountCell.style.borderLeft = '1px solid #000000';
+    totalAmountCell.style.borderRight = '1px solid #000000';
+    totalAmountCell.style.borderBottom = 'none';
+    totalAmountCell.style.padding = '6px';
+    totalAmountCell.style.textAlign = 'right';
+    totalAmountCell.style.fontWeight = 'bold';
+    totalAmountCell.style.backgroundColor = '#f8f8f8';
+    
+    const emptyCell = document.createElement('td');
+    emptyCell.style.borderTop = '1px solid #000000';
+    emptyCell.style.borderLeft = 'none';
+    emptyCell.style.borderRight = 'none';
+    emptyCell.style.borderBottom = 'none';
+    emptyCell.style.padding = '6px';
+    emptyCell.style.backgroundColor = '#f8f8f8';
+    
+    totalRow.appendChild(totalLabelCell);
+    totalRow.appendChild(totalAmountCell);
+    totalRow.appendChild(emptyCell);
+    tbody.appendChild(totalRow);
+
+    table.appendChild(tbody);
+    pdfContent.appendChild(header);
+    pdfContent.appendChild(table);
+    tempContainer.appendChild(pdfContent);
+    document.body.appendChild(tempContainer);
+
+    // Log the complete HTML structure for debugging
+    console.log('=== CUSTOMER PAYMENTS PDF GENERATION DEBUG ===');
+    console.log('Customer Name:', customerName);
+    console.log('Number of Payments:', payments.length);
+    console.log('Payments Data:', payments);
+    console.log('Complete PDF Content HTML:', pdfContent.outerHTML);
+    console.log('Complete Container HTML:', tempContainer.outerHTML);
+    console.log('Container dimensions:', tempContainer.offsetWidth, 'x', tempContainer.offsetHeight);
+    console.log('Container content length:', tempContainer.innerHTML.length);
+    
+    // Log individual elements for detailed inspection
+    console.log('Header HTML:', header.outerHTML);
+    console.log('Table HTML:', table.outerHTML);
+    console.log('Company Name Element:', companyName.outerHTML);
+    console.log('Customer Info Row:', customerInfoRow.outerHTML);
+    console.log('Customer Name Element:', customerNameElement.outerHTML);
+    console.log('Current Date Element:', currentDate.outerHTML);
+    console.log('Table Header Row:', headerRow.outerHTML);
+    console.log('Table Body:', tbody.outerHTML);
+    
+    // Log computed styles for key elements
+    if (pdfContent) {
+      console.log('PDF Content computed styles:', window.getComputedStyle(pdfContent));
+    }
+    if (table) {
+      console.log('Table computed styles:', window.getComputedStyle(table));
+    }
+    if (header) {
+      console.log('Header computed styles:', window.getComputedStyle(header));
+    }
+    
+    console.log('=== END CUSTOMER PAYMENTS PDF DEBUG ===');
+
+    const options: PDFOptions = {
+      filename: filename || `payments-${customerName}-${new Date().toISOString().split('T')[0]}.pdf`,
+      margin: 0,
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
+      },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }
+    };
+
+    try {
+      await html2pdf().set(options).from(pdfContent).save();
+      console.log('Customer payments PDF generated successfully');
+    } finally {
+      document.body.removeChild(tempContainer);
+    }
+  } catch (error) {
+    console.error('Error generating customer payments PDF:', error);
     throw error;
   }
 }; 

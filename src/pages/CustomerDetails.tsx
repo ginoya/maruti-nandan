@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchInvoices } from '../store/invoicesSlice';
 import { fetchPayments } from '../store/paymentsSlice';
 import { parseDate } from '../utils/dateUtils';
+import { generateCustomerPaymentsPDF } from '../utils/pdfGenerator';
 
 const CustomerDetails: React.FC = () => {
   const { customerName } = useParams<{ customerName: string }>();
@@ -106,6 +107,18 @@ const CustomerDetails: React.FC = () => {
     }).format(amount);
   };
 
+  const handlePrintPayments = async () => {
+    try {
+      await generateCustomerPaymentsPDF(
+        customerName || '',
+        customerPayments,
+        `payments-${customerName}-${new Date().toISOString().split('T')[0]}.pdf`
+      );
+    } catch (error) {
+      console.error('Error generating payments PDF:', error);
+    }
+  };
+
   const isLoading = invoicesLoading || paymentsLoading;
 
   if (!customerName) {
@@ -130,14 +143,30 @@ const CustomerDetails: React.FC = () => {
       <div className="max-w-7xl mx-auto p-md">
         {/* Header */}
         <div className="mb-lg">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate('/')}
-            className="mb-md"
-          >
-            ← Back
-          </Button>
+          <div className="flex justify-between items-center mb-md">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/')}
+            >
+              ← Back
+            </Button>
+            {/* Print Button - Only show when payments tab is active */}
+            {activeTab === 1 && customerPayments.length > 0 && (
+              <Button
+                variant="outline"
+                onClick={handlePrintPayments}
+                className="flex items-center gap-xs py-0"
+                size='sm'
+                style={{paddingTop: '0px', paddingBottom: '0px'}}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Print Payments
+              </Button>
+            )}
+          </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-lg">
             {customerName}
           </h1>
@@ -171,20 +200,20 @@ const CustomerDetails: React.FC = () => {
           </div>
         ) : (
           <Tab className="bg-white rounded-lg shadow-md">
-            <TabList>
-              <TabItem
-                isActive={activeTab === 0}
-                onClick={() => setActiveTab(0)}
-              >
-                Invoices ({customerInvoices.length})
-              </TabItem>
-              <TabItem
-                isActive={activeTab === 1}
-                onClick={() => setActiveTab(1)}
-              >
-                Payments ({customerPayments.length})
-              </TabItem>
-            </TabList>
+              <TabList>
+                <TabItem
+                  isActive={activeTab === 0}
+                  onClick={() => setActiveTab(0)}
+                >
+                  Invoices ({customerInvoices.length})
+                </TabItem>
+                <TabItem
+                  isActive={activeTab === 1}
+                  onClick={() => setActiveTab(1)}
+                >
+                  Payments ({customerPayments.length})
+                </TabItem>
+              </TabList>
             
             {/* Invoices Tab */}
             <TabPanel isActive={activeTab === 0} className="p-lg">
