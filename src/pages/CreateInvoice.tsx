@@ -249,10 +249,10 @@ const CreateInvoice: React.FC = () => {
                   <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700">{totals.box}</td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700">{totals.jodiTotal}</td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.box}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jodiTotal}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700 border-right-none">{totals.amount}</td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 border-right-none"><span className='number-span'>{totals.amount}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 
