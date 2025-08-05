@@ -1,5 +1,4 @@
 import React from 'react';
-import { useInvoices } from '../hooks/useInvoices';
 
 interface InvoicesProviderProps {
   children: React.ReactNode;

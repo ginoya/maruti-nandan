@@ -68,8 +68,7 @@ const Home: React.FC = () => {
       customerMetrics[customerName].totalTurnover - customerMetrics[customerName].totalReceived;
   });
 
-  // Debug: Calculate total from customer metrics
-  const totalFromCustomerMetrics = Object.values(customerMetrics).reduce((sum, customer) => sum + customer.totalReceived, 0);
+
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {

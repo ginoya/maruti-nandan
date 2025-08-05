@@ -15,10 +15,7 @@ import Payments from './pages/Payments'
 import Dashboard from './pages/Dashboard'
 import DashboardOverview from './pages/dashboard/DashboardOverview'
 import './App.css'
-import { useAppSelector } from './store/hooks'
-
 function App() {
-  const state = useAppSelector((state) => state);
   return (
     <AuthProvider>
       <PedhisProvider>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Dropdown, DatePicker } from './ui';
+import { Button, Dropdown, DatePicker } from './ui';
 import { usePedhis } from '../hooks/usePedhis';
 import { useCustomers } from '../hooks/useCustomers';
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppDispatch } from '../store/hooks';
 import { fetchCustomers } from '../store/customersSlice';
 
 interface CustomersProviderProps {
