@@ -371,7 +371,9 @@ export const generateCustomerPaymentsPDF = async (
     pdfContent.className = 'print-this';
     pdfContent.style.border = '2px solid #000000';
     pdfContent.style.padding = '10px 0 0 0';
+    pdfContent.style.margin = '16px';
     pdfContent.style.backgroundColor = '#ffffff';
+
 
     // Header
     const header = document.createElement('div');
@@ -549,7 +551,7 @@ export const generateCustomerPaymentsPDF = async (
     tempContainer.appendChild(pdfContent);
     document.body.appendChild(tempContainer);
 
-
+    console.log('---->',pdfContent);
 
     const options: PDFOptions = {
       filename: filename || `payments-${customerName}-${new Date().toISOString().split('T')[0]}.pdf`,
