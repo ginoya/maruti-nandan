@@ -18,10 +18,7 @@ export default defineConfig({
           'ui': ['@radix-ui/react-icons', '@radix-ui/react-popover', '@radix-ui/react-select'],
         },
         // Ensure proper chunk loading order
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-          return `js/[name]-[hash].js`;
-        },
+        chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
       },
