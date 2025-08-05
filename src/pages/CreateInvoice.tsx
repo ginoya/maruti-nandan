@@ -11,6 +11,7 @@ import type { AddInvoiceItemData } from '../components/AddInvoiceItemModal';
 import EditInvoiceItemModal from '../components/EditInvoiceItemModal';
 import { useInvoice } from '../hooks/useInvoice';
 import { useInvoices } from '../hooks/useInvoices';
+import { invoiceService } from '../services/invoiceService';
 
 const CreateInvoice: React.FC = () => {
   const { invoiceData, calculateTotals, updateDetails, addItem, removeItem, updateItem, reset } = useInvoice();
@@ -110,7 +111,6 @@ const CreateInvoice: React.FC = () => {
     updateDetails({
       businessName: data.business,
       customer: data.customer,
-      invoiceNo: data.invoiceNumber,
       invoiceDate: (() => {
         // Convert YYYY-MM-DD to DD-MM-YYYY format
         const [year, month, day] = data.date.split('-');
@@ -127,16 +127,28 @@ const CreateInvoice: React.FC = () => {
     
     setIsGeneratingInvoice(true);
     try {
-      // First save the invoice to Firebase using Redux
-      const success = await saveInvoiceToFirebase(invoiceData);
+      // Generate next invoice number
+      const nextInvoiceNumber = await invoiceService.generateNextInvoiceNumber();
+      
+      // Update the invoice number in Redux
+      updateDetails({ invoiceNo: nextInvoiceNumber });
+      
+      // Create a copy of invoiceData with the updated invoice number
+      const invoiceDataWithNumber = {
+        ...invoiceData,
+        invoiceNo: nextInvoiceNumber
+      };
+      
+      // Save the invoice to Firebase with the generated invoice number
+      const success = await saveInvoiceToFirebase(invoiceDataWithNumber);
       if (success) {
         console.log('Invoice saved to Firebase successfully');
         
         // Fetch invoices again to refresh the data
         refetch();
         
-        // Then generate the PDF
-        await generateInvoicePDF(`invoice-${invoiceData.invoiceNo}-${invoiceData.invoiceDate}.pdf`);
+        // Then generate the PDF using the same invoice number
+        await generateInvoicePDF(`invoice-${nextInvoiceNumber}-${invoiceData.invoiceDate}.pdf`);
         
         // You can add a success toast notification here
         console.log('Invoice saved and PDF generated successfully');
@@ -303,7 +315,6 @@ const CreateInvoice: React.FC = () => {
          initialData={{
            business: '',
            customer: '',
-           invoiceNumber: invoiceData.invoiceNo,
            date: (() => {
              // Convert DD-MM-YYYY to YYYY-MM-DD format
              const [day, month, year] = invoiceData.invoiceDate.split('-');

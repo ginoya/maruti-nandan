@@ -13,7 +13,6 @@ interface EditInvoiceModalProps {
 export interface EditInvoiceData {
   business: string;
   customer: string;
-  invoiceNumber: string;
   date: string;
 }
 
@@ -34,7 +33,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const [formData, setFormData] = useState<EditInvoiceData>({
     business: initialData?.business || '',
     customer: initialData?.customer || '',
-    invoiceNumber: initialData?.invoiceNumber || '',
     date: initialData?.date || getTodayDate()
   });
 
@@ -162,19 +160,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             enableSearch={true}
           />
 
-          {/* Invoice Number */}
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-sm">
-              Invoice Number
-            </label>
-            <Input
-              type="number"
-              value={formData.invoiceNumber}
-              onChange={(e) => handleInputChange('invoiceNumber', e.target.value)}
-              placeholder="Enter invoice number"
-              required
-            />
-          </div>
+
 
           {/* Date */}
           <DatePicker

@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import type { InvoiceData } from '../store/invoiceSlice';
 
 export interface FirebaseInvoiceData extends InvoiceData {
@@ -9,7 +9,77 @@ export interface FirebaseInvoiceData extends InvoiceData {
   updatedAt?: Date;
 }
 
+export interface InvoiceCounter {
+  lastNumber: number;
+}
+
 export const invoiceService = {
+  // Get current month-year in YYYY-MM format
+  getCurrentMonthYear(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  },
+
+  // Get or create invoice counter for current month
+  async getInvoiceCounter(): Promise<number> {
+    try {
+      const monthYear = this.getCurrentMonthYear();
+      const counterRef = doc(db, 'invoice_counters', monthYear);
+      const counterDoc = await getDoc(counterRef);
+
+      if (counterDoc.exists()) {
+        const data = counterDoc.data() as InvoiceCounter;
+        return data.lastNumber;
+      } else {
+        // Return 0 for new months (no invoices yet)
+        return 0;
+      }
+    } catch (error) {
+      console.error('Error getting invoice counter:', error);
+      throw error;
+    }
+  },
+
+  // Increment invoice counter for current month
+  async incrementInvoiceCounter(): Promise<void> {
+    try {
+      const monthYear = this.getCurrentMonthYear();
+      const counterRef = doc(db, 'invoice_counters', monthYear);
+      const counterDoc = await getDoc(counterRef);
+
+      if (counterDoc.exists()) {
+        const data = counterDoc.data() as InvoiceCounter;
+        await updateDoc(counterRef, {
+          lastNumber: data.lastNumber + 1
+        });
+      } else {
+        // Create new counter for current month with lastNumber: 1
+        const newCounter: InvoiceCounter = { lastNumber: 1 };
+        await setDoc(counterRef, newCounter);
+      }
+    } catch (error) {
+      console.error('Error incrementing invoice counter:', error);
+      throw error;
+    }
+  },
+
+  // Generate next invoice number
+  async generateNextInvoiceNumber(): Promise<string> {
+    try {
+      const currentNumber = await this.getInvoiceCounter();
+      // For the first invoice, we want to return 1, not currentNumber + 1
+      // The currentNumber represents the last used number, so the next should be currentNumber + 1
+      // But if currentNumber is 0 (no invoices yet), we want 1
+      const nextNumber = currentNumber === 0 ? 1 : currentNumber + 1;
+      return nextNumber.toString();
+    } catch (error) {
+      console.error('Error generating invoice number:', error);
+      throw error;
+    }
+  },
+
   // Save invoice to Firebase
   async saveInvoice(invoiceData: InvoiceData): Promise<string> {
     try {
@@ -25,6 +95,10 @@ export const invoiceService = {
 
       const docRef = await addDoc(collection(db, 'invoices'), invoiceWithTimestamps);
       console.log('Invoice saved successfully with ID:', docRef.id);
+      
+      // Increment the invoice counter after successful save
+      await this.incrementInvoiceCounter();
+      
       return docRef.id;
     } catch (error) {
       console.error('Error saving invoice:', error);
