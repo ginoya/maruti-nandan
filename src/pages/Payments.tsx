@@ -39,7 +39,6 @@ const Payments: React.FC = () => {
         notes: data.notes
       })).unwrap();
       
-      console.log('Payment added successfully:', data);
       setIsAddPaymentModalOpen(false);
       
       // Fetch payments again to refresh the table

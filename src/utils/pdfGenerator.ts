@@ -94,13 +94,11 @@ export const generatePDF = async (
 
     try {
       await html2pdf().set(opt).from(clonedElement).save();
-      console.log('PDF generated successfully');
     } finally {
       // Clean up the temporary container
       document.body.removeChild(tempContainer);
     }
   } catch (error) {
-    console.error('Error generating PDF:', error);
     throw error;
   }
 };
@@ -326,27 +324,6 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
     tempContainer.appendChild(clonedElement);
     document.body.appendChild(tempContainer);
     
-    // Log the generated HTML and CSS for debugging
-    console.log('=== PDF GENERATION DEBUG ===');
-    console.log('Original element:', element);
-    console.log('Cloned element:', clonedElement);
-    console.log('Applied CSS styles:', style.textContent);
-    console.log('Complete container HTML:', tempContainer.outerHTML);
-    console.log('Container dimensions:', tempContainer.offsetWidth, 'x', tempContainer.offsetHeight);
-    console.log('Container content length:', tempContainer.innerHTML.length);
-    
-    // Log computed styles for key elements
-    const firstTable = clonedElement.querySelector('table');
-    const firstCell = clonedElement.querySelector('td');
-    if (firstTable) {
-      console.log('First table computed styles:', window.getComputedStyle(firstTable));
-    }
-    if (firstCell) {
-      console.log('First cell computed styles:', window.getComputedStyle(firstCell));
-    }
-    
-    console.log('=== END DEBUG ===');
-    
     const options: PDFOptions = {
       filename: filename || `invoice-${new Date().toISOString().split('T')[0]}.pdf`,
       margin: 4,
@@ -363,16 +340,12 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
       }
     };
 
-    console.log('clonedElement-->',clonedElement)
-
     try {
       await html2pdf().set(options).from(clonedElement).save();
-      console.log('PDF generated successfully');
     } finally {
       document.body.removeChild(tempContainer);
     }
   } catch (error) {
-    console.error('Error generating PDF:', error);
     throw error;
   }
 }; 
@@ -576,38 +549,7 @@ export const generateCustomerPaymentsPDF = async (
     tempContainer.appendChild(pdfContent);
     document.body.appendChild(tempContainer);
 
-    // Log the complete HTML structure for debugging
-    console.log('=== CUSTOMER PAYMENTS PDF GENERATION DEBUG ===');
-    console.log('Customer Name:', customerName);
-    console.log('Number of Payments:', payments.length);
-    console.log('Payments Data:', payments);
-    console.log('Complete PDF Content HTML:', pdfContent.outerHTML);
-    console.log('Complete Container HTML:', tempContainer.outerHTML);
-    console.log('Container dimensions:', tempContainer.offsetWidth, 'x', tempContainer.offsetHeight);
-    console.log('Container content length:', tempContainer.innerHTML.length);
-    
-    // Log individual elements for detailed inspection
-    console.log('Header HTML:', header.outerHTML);
-    console.log('Table HTML:', table.outerHTML);
-    console.log('Company Name Element:', companyName.outerHTML);
-    console.log('Customer Info Row:', customerInfoRow.outerHTML);
-    console.log('Customer Name Element:', customerNameElement.outerHTML);
-    console.log('Current Date Element:', currentDate.outerHTML);
-    console.log('Table Header Row:', headerRow.outerHTML);
-    console.log('Table Body:', tbody.outerHTML);
-    
-    // Log computed styles for key elements
-    if (pdfContent) {
-      console.log('PDF Content computed styles:', window.getComputedStyle(pdfContent));
-    }
-    if (table) {
-      console.log('Table computed styles:', window.getComputedStyle(table));
-    }
-    if (header) {
-      console.log('Header computed styles:', window.getComputedStyle(header));
-    }
-    
-    console.log('=== END CUSTOMER PAYMENTS PDF DEBUG ===');
+
 
     const options: PDFOptions = {
       filename: filename || `payments-${customerName}-${new Date().toISOString().split('T')[0]}.pdf`,
@@ -627,7 +569,6 @@ export const generateCustomerPaymentsPDF = async (
 
     try {
       await html2pdf().set(options).from(pdfContent).save();
-      console.log('Customer payments PDF generated successfully');
     } finally {
       document.body.removeChild(tempContainer);
     }

@@ -70,11 +70,6 @@ const Home: React.FC = () => {
 
   // Debug: Calculate total from customer metrics
   const totalFromCustomerMetrics = Object.values(customerMetrics).reduce((sum, customer) => sum + customer.totalReceived, 0);
-  
-  console.log('Debug - Total Received (from payments):', totalReceived);
-  console.log('Debug - Total Received (from customer metrics):', totalFromCustomerMetrics);
-  console.log('Debug - Payments data:', payments);
-  console.log('Debug - Customer metrics:', customerMetrics);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {

@@ -17,9 +17,7 @@ const PedhisProvider: React.FC<PedhisProviderProps> = ({ children }) => {
 
   // Optional: Log the state for debugging
   useEffect(() => {
-    if (data.length > 0) {
-      console.log('Pedhis loaded:', data);
-    }
+
     if (error) {
       console.error('Error loading pedhis:', error);
     }

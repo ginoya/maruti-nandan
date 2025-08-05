@@ -58,8 +58,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     }
   }, [pedhis, formData.business]);
 
-  console.log('businesses--->', businesses, formData.business);
-
   const handleClose = () => {
     onClose();
     // Match animation duration

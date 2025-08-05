@@ -19,7 +19,6 @@ import { useAppSelector } from './store/hooks'
 
 function App() {
   const state = useAppSelector((state) => state);
-  console.log('state--->', state);
   return (
     <AuthProvider>
       <PedhisProvider>

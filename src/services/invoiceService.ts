@@ -94,7 +94,6 @@ export const invoiceService = {
       };
 
       const docRef = await addDoc(collection(db, 'invoices'), invoiceWithTimestamps);
-      console.log('Invoice saved successfully with ID:', docRef.id);
       
       // Increment the invoice counter after successful save
       await this.incrementInvoiceCounter();
@@ -164,7 +163,6 @@ export const invoiceService = {
         ...invoiceData,
         updatedAt: new Date()
       });
-      console.log('Invoice updated successfully');
     } catch (error) {
       console.error('Error updating invoice:', error);
       throw error;
@@ -180,7 +178,6 @@ export const invoiceService = {
         deletedAt: new Date(),
         updatedAt: new Date()
       });
-      console.log('Invoice soft deleted successfully');
     } catch (error) {
       console.error('Error soft deleting invoice:', error);
       throw error;
@@ -192,7 +189,6 @@ export const invoiceService = {
     try {
       const docRef = doc(db, 'invoices', id);
       await deleteDoc(docRef);
-      console.log('Invoice deleted successfully');
     } catch (error) {
       console.error('Error deleting invoice:', error);
       throw error;

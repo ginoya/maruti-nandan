@@ -26,7 +26,6 @@ export const paymentService = {
       };
 
       const docRef = await addDoc(collection(db, 'payments'), paymentWithTimestamps);
-      console.log('Payment saved successfully with ID:', docRef.id);
       return docRef.id;
     } catch (error) {
       console.error('Error saving payment:', error);
@@ -92,7 +91,6 @@ export const paymentService = {
         ...paymentData,
         updatedAt: new Date()
       });
-      console.log('Payment updated successfully');
     } catch (error) {
       console.error('Error updating payment:', error);
       throw error;
@@ -108,7 +106,6 @@ export const paymentService = {
         deletedAt: new Date(),
         updatedAt: new Date()
       });
-      console.log('Payment soft deleted successfully');
     } catch (error) {
       console.error('Error soft deleting payment:', error);
       throw error;
@@ -120,7 +117,6 @@ export const paymentService = {
     try {
       const docRef = doc(db, 'payments', id);
       await deleteDoc(docRef);
-      console.log('Payment deleted successfully');
     } catch (error) {
       console.error('Error deleting payment:', error);
       throw error;

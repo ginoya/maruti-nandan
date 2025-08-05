@@ -113,8 +113,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
       try {
         // Call the onSave callback with the form data
         await onSave(formData);
-        
-        console.log('Payment saved successfully');
       } catch (error) {
         console.error('Failed to save payment:', error);
         // You can add error handling here (e.g., show a toast notification)

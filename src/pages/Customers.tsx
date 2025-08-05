@@ -33,7 +33,6 @@ const Customers: React.FC = () => {
       // Add to Redux state
       dispatch(addCustomerToState(newCustomer));
       
-      console.log('Customer added successfully');
       setCustomerName('');
       setIsAddCustomerModalOpen(false);
       

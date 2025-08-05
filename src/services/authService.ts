@@ -14,10 +14,8 @@ class AuthService {
   // Test Firestore connectivity
   async testFirestoreConnection(): Promise<boolean> {
     try {
-      console.log('Testing Firestore connection...');
       const testCollection = collection(db, 'users');
       await getDocs(testCollection);
-      console.log('Firestore connection successful');
       return true;
     } catch (error) {
       console.error('Firestore connection failed:', error);
@@ -28,8 +26,6 @@ class AuthService {
   // Sign in with email and password
   async signIn(email: string, password: string): Promise<{ success: boolean; error?: string; userProfile?: UserProfile }> {
     try {
-      console.log('Attempting sign in with email:', email);
-      
       // Test Firestore connection first
       const firestoreConnected = await this.testFirestoreConnection();
       if (!firestoreConnected) {
@@ -38,22 +34,18 @@ class AuthService {
       
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
-      console.log('Firebase auth successful, user UID:', user.uid);
       
       // Get additional user profile data from Firestore
       const userProfile = await this.getUserProfile(user.uid);
       
       if (!userProfile) {
-        console.log('User profile not found in Firestore');
         return { success: false, error: "User profile not found. Please contact administrator." };
       }
 
       if (!userProfile.isActive) {
-        console.log('User account is deactivated');
         return { success: false, error: "Account is deactivated. Please contact administrator." };
       }
 
-      console.log('Sign in successful, user profile:', userProfile);
       return { success: true, userProfile };
     } catch (error: any) {
       console.error('Sign in error:', error);
@@ -78,9 +70,7 @@ class AuthService {
   // Sign out user
   async signOut(): Promise<void> {
     try {
-      console.log('Signing out user');
       await signOut(this.auth);
-      console.log('Sign out successful');
     } catch (error) {
       console.error('Sign out error:', error);
       // Don't throw error, just log it
@@ -95,12 +85,10 @@ class AuthService {
   // Get user profile from Firestore
   async getUserProfile(uid: string): Promise<UserProfile | null> {
     try {
-      console.log('Fetching user profile for UID:', uid);
       const userDoc = await getDoc(doc(db, 'users', uid));
       
       if (userDoc.exists()) {
         const data = userDoc.data();
-        console.log('User profile data:', data);
         return {
           username: data.username,
           isAdmin: data.isAdmin,
@@ -108,7 +96,6 @@ class AuthService {
         };
       }
       
-      console.log('User document does not exist');
       return null;
     } catch (error) {
       console.error('Error fetching user profile:', error);

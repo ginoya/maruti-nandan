@@ -42,7 +42,6 @@ const CreateInvoice: React.FC = () => {
   };
 
   const handleSaveAddItemModal = (data: AddInvoiceItemData) => {
-    console.log('Adding invoice item:', data);
     // Add the new item to Redux
     addItem({
       particular: data.particular,
@@ -106,7 +105,6 @@ const CreateInvoice: React.FC = () => {
   }, []);
 
   const handleSaveEditModal = (data: EditInvoiceData) => {
-    console.log('Saving invoice data:', data);
     // Update invoice details in Redux
     updateDetails({
       businessName: data.business,
@@ -142,8 +140,6 @@ const CreateInvoice: React.FC = () => {
       // Save the invoice to Firebase with the generated invoice number
       const success = await saveInvoiceToFirebase(invoiceDataWithNumber);
       if (success) {
-        console.log('Invoice saved to Firebase successfully');
-        
         // Fetch invoices again to refresh the data
         refetch();
         
@@ -151,7 +147,6 @@ const CreateInvoice: React.FC = () => {
         await generateInvoicePDF(`invoice-${nextInvoiceNumber}-${invoiceData.invoiceDate}.pdf`);
         
         // You can add a success toast notification here
-        console.log('Invoice saved and PDF generated successfully');
         
         // Reset the invoice slice after successful save and print
         reset();
