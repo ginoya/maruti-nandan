@@ -256,7 +256,7 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
       .invoice-table{
         tbody{
           tr{
-            height: 20px;
+            height: 16px;
             td{
               height: 16px;
               padding: 0;
