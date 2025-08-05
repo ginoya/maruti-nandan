@@ -6,7 +6,7 @@ interface DeleteConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  message: string;
+  message: string | React.ReactNode;
   isLoading?: boolean;
 }
 

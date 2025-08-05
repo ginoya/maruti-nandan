@@ -5,12 +5,16 @@ import AddPaymentModal from '../components/AddPaymentModal';
 import type { AddPaymentData } from '../components/AddPaymentModal';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchCustomers } from '../store/customersSlice';
-import { fetchPayments, addPayment } from '../store/paymentsSlice';
+import { fetchPayments, addPayment, softDeletePayment } from '../store/paymentsSlice';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 const Payments: React.FC = () => {
   const dispatch = useAppDispatch();
   const { data: payments, loading, error } = useAppSelector((state) => state.payments);
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [paymentToDelete, setPaymentToDelete] = useState<{ id: string; customerName: string; amount: number } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCustomers());
@@ -46,6 +50,36 @@ const Payments: React.FC = () => {
     }
   };
 
+  const handleDeleteClick = (paymentId: string, customerName: string, amount: number) => {
+    setPaymentToDelete({ id: paymentId, customerName, amount });
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!paymentToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      // Delete the payment
+      await dispatch(softDeletePayment(paymentToDelete.id)).unwrap();
+      
+      // Fetch fresh data from database
+      await dispatch(fetchPayments()).unwrap();
+      
+      setDeleteModalOpen(false);
+      setPaymentToDelete(null);
+    } catch (error) {
+      console.error('Error deleting payment:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setPaymentToDelete(null);
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -66,9 +100,14 @@ const Payments: React.FC = () => {
           </div>
 
           {/* Loading State */}
-          {loading && (
+          {(loading || isDeleting) && (
             <div className="flex justify-center items-center py-xl">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto mb-sm"></div>
+                <div className="text-sm text-gray-600">
+                  {isDeleting ? 'Deleting payment and refreshing data...' : 'Loading payments...'}
+                </div>
+              </div>
             </div>
           )}
 
@@ -98,12 +137,15 @@ const Payments: React.FC = () => {
                       <th className="px-md py-sm text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Notes
                       </th>
+                      <th className="px-md py-sm text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {payments.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-md py-lg text-center text-gray-500">
+                        <td colSpan={5} className="px-md py-lg text-center text-gray-500">
                           No payments found. Add your first payment using the button below.
                         </td>
                       </tr>
@@ -128,6 +170,19 @@ const Payments: React.FC = () => {
                           <td className="px-md py-sm whitespace-nowrap">
                             <div className="text-sm text-gray-900">
                               {payment.notes || '-'}
+                            </div>
+                          </td>
+                          <td className="px-md py-sm whitespace-nowrap text-center">
+                            <div className="flex gap-sm justify-center">
+                              <button
+                                onClick={() => payment.id && handleDeleteClick(payment.id, payment.customerName, payment.amount)}
+                                className="p-sm text-error-600 hover:text-error-800 hover:bg-error-100 rounded-lg transition-colors"
+                                title="Delete Payment"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -161,6 +216,24 @@ const Payments: React.FC = () => {
         isOpen={isAddPaymentModalOpen}
         onClose={handleCloseAddPaymentModal}
         onSave={handleSaveAddPaymentModal}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Payment"
+        message={
+          <span>
+            Are you sure you want to delete the payment of{' '}
+            <span className="font-bold text-error-600">{formatCurrency(paymentToDelete?.amount || 0)}</span>
+            {' '}for{' '}
+            <span className="font-bold text-secondary-800">{paymentToDelete?.customerName}</span>?
+            {' '}This action cannot be undone.
+          </span>
+        }
+        isLoading={isDeleting}
       />
     </div>
   );

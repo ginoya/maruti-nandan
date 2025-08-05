@@ -22,6 +22,7 @@ const CreateInvoice: React.FC = () => {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isEditItemModalOpen, setIsEditItemModalOpen] = useState(false);
   const [selectedItemForEdit, setSelectedItemForEdit] = useState<AddInvoiceItemData | null>(null);
+  const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
 
   const handleEditInvoice = () => {
     setIsEditModalOpen(true);
@@ -122,6 +123,9 @@ const CreateInvoice: React.FC = () => {
   const totals = calculateTotals();
 
   const handleGenerateInvoice = async () => {
+    if (isGeneratingInvoice) return; // Prevent multiple clicks
+    
+    setIsGeneratingInvoice(true);
     try {
       // First save the invoice to Firebase using Redux
       const success = await saveInvoiceToFirebase(invoiceData);
@@ -148,6 +152,8 @@ const CreateInvoice: React.FC = () => {
     } catch (error) {
       console.error('Failed to save invoice or generate PDF:', error);
       // You can add an error toast notification here
+    } finally {
+      setIsGeneratingInvoice(false);
     }
   };
 
@@ -279,8 +285,13 @@ const CreateInvoice: React.FC = () => {
             </svg>
           </Button>
         </div>
-        <Button variant="gradient" size="md" onClick={handleGenerateInvoice}>
-          Print
+        <Button 
+          variant="gradient" 
+          size="md" 
+          onClick={handleGenerateInvoice}
+          disabled={isGeneratingInvoice}
+        >
+          {isGeneratingInvoice ? 'Saving & Printing...' : 'Print'}
         </Button>
       </div>
 

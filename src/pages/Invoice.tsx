@@ -22,7 +22,7 @@ const Invoice: React.FC = () => {
   const { invoices, loading, error } = useAppSelector((state) => state.invoices);
   const [activeTab, setActiveTab] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: string; invoiceNo: string } | null>(null);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: string; invoiceNo: string; customer: string; amount: number } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
@@ -33,8 +33,8 @@ const Invoice: React.FC = () => {
     navigate('/invoice/new');
   };
 
-  const handleDeleteClick = (invoiceId: string, invoiceNo: string) => {
-    setInvoiceToDelete({ id: invoiceId, invoiceNo });
+  const handleDeleteClick = (invoiceId: string, invoiceNo: string, customer: string, amount: number) => {
+    setInvoiceToDelete({ id: invoiceId, invoiceNo, customer, amount });
     setDeleteModalOpen(true);
   };
 
@@ -181,7 +181,7 @@ const Invoice: React.FC = () => {
                                 </svg>
                               </button>
                               <button
-                                onClick={() => invoice.id && handleDeleteClick(invoice.id, invoice.invoiceNo)}
+                                onClick={() => invoice.id && handleDeleteClick(invoice.id, invoice.invoiceNo, invoice.customer, invoice.amount)}
                                 className="p-sm text-error-600 hover:text-error-800 hover:bg-error-100 rounded-lg transition-colors"
                                 title="Delete Invoice"
                               >
@@ -220,7 +220,17 @@ const Invoice: React.FC = () => {
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         title="Delete Invoice"
-        message={`Are you sure you want to delete invoice ${invoiceToDelete?.invoiceNo}? This action cannot be undone.`}
+        message={
+          <span>
+            Are you sure you want to delete invoice{' '}
+            <span className="font-bold text-error-600">{invoiceToDelete?.invoiceNo}</span>
+            {' '}for{' '}
+            <span className="font-bold text-secondary-800">{invoiceToDelete?.customer}</span>
+            {' '}with amount{' '}
+            <span className="font-bold text-error-600">₹{invoiceToDelete?.amount?.toLocaleString()}</span>?
+            {' '}This action cannot be undone.
+          </span>
+        }
         isLoading={isDeleting}
       />
     </div>

@@ -29,6 +29,15 @@ export const addPayment = createAsyncThunk(
   }
 );
 
+// Async thunk to soft delete payment
+export const softDeletePayment = createAsyncThunk(
+  'payments/softDeletePayment',
+  async (paymentId: string) => {
+    await paymentService.softDeletePayment(paymentId);
+    return paymentId;
+  }
+);
+
 const paymentsSlice = createSlice({
   name: 'payments',
   initialState,
@@ -65,6 +74,17 @@ const paymentsSlice = createSlice({
       .addCase(addPayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to add payment';
+      })
+      // Soft delete payment
+      .addCase(softDeletePayment.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(softDeletePayment.fulfilled, (state, action) => {
+        // Remove the payment from the state
+        state.data = state.data.filter(payment => payment.id !== action.payload);
+      })
+      .addCase(softDeletePayment.rejected, (state, action) => {
+        state.error = action.error.message || 'Failed to delete payment';
       });
   },
 });

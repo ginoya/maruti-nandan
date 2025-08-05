@@ -34,7 +34,7 @@ export const paymentService = {
     }
   },
 
-  // Get all payments
+  // Get all payments (excluding soft deleted ones)
   async getAllPayments(): Promise<FirebasePaymentData[]> {
     try {
       const q = query(collection(db, 'payments'), orderBy('createdAt', 'desc'));
@@ -42,10 +42,14 @@ export const paymentService = {
       const payments: FirebasePaymentData[] = [];
       
       querySnapshot.forEach((doc) => {
-        payments.push({
-          id: doc.id,
-          ...doc.data()
-        } as FirebasePaymentData);
+        const data = doc.data();
+        // Filter out soft deleted payments
+        if (!data.isDeleted) {
+          payments.push({
+            id: doc.id,
+            ...data
+          } as FirebasePaymentData);
+        }
       });
       
       return payments;
@@ -55,16 +59,21 @@ export const paymentService = {
     }
   },
 
-  // Get payment by ID
+  // Get payment by ID (excluding soft deleted ones)
   async getPaymentById(id: string): Promise<FirebasePaymentData | null> {
     try {
       const docRef = doc(db, 'payments', id);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
+        const data = docSnap.data();
+        // Check if payment is soft deleted
+        if (data.isDeleted) {
+          return null; // Return null for soft deleted payments
+        }
         return {
           id: docSnap.id,
-          ...docSnap.data()
+          ...data
         } as FirebasePaymentData;
       } else {
         return null;
@@ -90,7 +99,23 @@ export const paymentService = {
     }
   },
 
-  // Delete payment
+  // Soft delete payment
+  async softDeletePayment(id: string): Promise<void> {
+    try {
+      const docRef = doc(db, 'payments', id);
+      await updateDoc(docRef, {
+        isDeleted: true,
+        deletedAt: new Date(),
+        updatedAt: new Date()
+      });
+      console.log('Payment soft deleted successfully');
+    } catch (error) {
+      console.error('Error soft deleting payment:', error);
+      throw error;
+    }
+  },
+
+  // Hard delete payment (keeping for reference)
   async deletePayment(id: string): Promise<void> {
     try {
       const docRef = doc(db, 'payments', id);
