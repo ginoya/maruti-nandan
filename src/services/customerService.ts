@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, query, orderBy, updateDoc, doc, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, orderBy, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { convertFirebaseArray } from '../utils/firebaseUtils';
 
