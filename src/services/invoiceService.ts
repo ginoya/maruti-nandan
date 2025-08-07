@@ -23,18 +23,18 @@ export const invoiceService = {
     return `${year}-${month}`;
   },
 
-  // Get or create invoice counter for current month
-  async getInvoiceCounter(): Promise<number> {
+  // Get or create invoice counter for specific customer and month
+  async getInvoiceCounter(customerName: string): Promise<number> {
     try {
       const monthYear = this.getCurrentMonthYear();
-      const counterRef = doc(db, 'invoice_counters', monthYear);
+      const counterRef = doc(db, 'invoice_counters', `${monthYear}-${customerName}`);
       const counterDoc = await getDoc(counterRef);
 
       if (counterDoc.exists()) {
         const data = counterDoc.data() as InvoiceCounter;
         return data.lastNumber;
       } else {
-        // Return 0 for new months (no invoices yet)
+        // Return 0 for new customer-month combinations (no invoices yet)
         return 0;
       }
     } catch (error) {
@@ -43,11 +43,11 @@ export const invoiceService = {
     }
   },
 
-  // Increment invoice counter for current month
-  async incrementInvoiceCounter(): Promise<void> {
+  // Increment invoice counter for specific customer and month
+  async incrementInvoiceCounter(customerName: string): Promise<void> {
     try {
       const monthYear = this.getCurrentMonthYear();
-      const counterRef = doc(db, 'invoice_counters', monthYear);
+      const counterRef = doc(db, 'invoice_counters', `${monthYear}-${customerName}`);
       const counterDoc = await getDoc(counterRef);
 
       if (counterDoc.exists()) {
@@ -56,7 +56,7 @@ export const invoiceService = {
           lastNumber: data.lastNumber + 1
         });
       } else {
-        // Create new counter for current month with lastNumber: 1
+        // Create new counter for current customer-month with lastNumber: 1
         const newCounter: InvoiceCounter = { lastNumber: 1 };
         await setDoc(counterRef, newCounter);
       }
@@ -66,10 +66,10 @@ export const invoiceService = {
     }
   },
 
-  // Generate next invoice number
-  async generateNextInvoiceNumber(): Promise<string> {
+  // Generate next invoice number for specific customer
+  async generateNextInvoiceNumber(customerName: string): Promise<string> {
     try {
-      const currentNumber = await this.getInvoiceCounter();
+      const currentNumber = await this.getInvoiceCounter(customerName);
       // For the first invoice, we want to return 1, not currentNumber + 1
       // The currentNumber represents the last used number, so the next should be currentNumber + 1
       // But if currentNumber is 0 (no invoices yet), we want 1
@@ -96,8 +96,8 @@ export const invoiceService = {
 
       const docRef = await addDoc(collection(db, 'invoices'), invoiceWithTimestamps);
       
-      // Increment the invoice counter after successful save
-      await this.incrementInvoiceCounter();
+      // Increment the invoice counter for this specific customer after successful save
+      await this.incrementInvoiceCounter(invoiceData.customer);
       
       return docRef.id;
     } catch (error) {

@@ -125,8 +125,8 @@ const CreateInvoice: React.FC = () => {
     
     setIsGeneratingInvoice(true);
     try {
-      // Generate next invoice number
-      const nextInvoiceNumber = await invoiceService.generateNextInvoiceNumber();
+      // Generate next invoice number for this customer
+      const nextInvoiceNumber = await invoiceService.generateNextInvoiceNumber(invoiceData.customer);
       
       // Update the invoice number in Redux
       updateDetails({ invoiceNo: nextInvoiceNumber });

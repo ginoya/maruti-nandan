@@ -4,33 +4,56 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import Navigation from '../components/Navigation';
 import { fetchInvoices } from '../store/invoicesSlice';
 import { fetchPayments } from '../store/paymentsSlice';
+import { useCustomers } from '../hooks/useCustomers';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { invoices, loading: invoicesLoading } = useAppSelector((state) => state.invoices);
   const { data: payments, loading: paymentsLoading } = useAppSelector((state) => state.payments);
+  const { customers } = useCustomers();
 
   useEffect(() => {
     dispatch(fetchInvoices());
     dispatch(fetchPayments());
   }, [dispatch]);
 
-  // Calculate overall invoice metrics
+  // Get list of active customer names (excluding soft-deleted customers)
+  const activeCustomerNames = customers.map((customer: any) => customer.name);
+
+  // Calculate overall invoice metrics (only for active customers)
   const invoiceMetrics = {
-    totalTurnover: invoices.reduce((sum, invoice) => sum + (invoice.grandTotal || 0), 0),
+    totalTurnover: invoices.reduce((sum, invoice) => {
+      // Only include invoices for active customers
+      if (activeCustomerNames.includes(invoice.customer)) {
+        return sum + (invoice.grandTotal || 0);
+      }
+      return sum;
+    }, 0),
   };
 
-  // Calculate overall payment metrics
-  const totalReceived = payments.reduce((sum, payment) => sum + payment.amount, 0);
+  // Calculate overall payment metrics (only for active customers)
+  const totalReceived = payments.reduce((sum, payment) => {
+    // Only include payments for active customers
+    if (activeCustomerNames.includes(payment.customerName)) {
+      return sum + payment.amount;
+    }
+    return sum;
+  }, 0);
+  
   const paymentMetrics = {
     totalReceived,
     pendingAmount: invoiceMetrics.totalTurnover - totalReceived
   };
 
-  // Calculate customer-wise metrics
+  // Calculate customer-wise metrics (only for active customers)
   const customerMetrics = invoices.reduce((acc, invoice) => {
     const customerName = invoice.customer;
+    
+    // Only include customers that are still active (not soft-deleted)
+    if (!activeCustomerNames.includes(customerName)) {
+      return acc;
+    }
     
     if (!acc[customerName]) {
       acc[customerName] = {
@@ -46,9 +69,15 @@ const Home: React.FC = () => {
     return acc;
   }, {} as Record<string, { totalTurnover: number; totalReceived: number; pendingAmount: number; invoiceCount: number }>);
 
-  // Add payment data to customer metrics
+  // Add payment data to customer metrics (only for active customers)
   payments.forEach(payment => {
     const customerName = payment.customerName;
+    
+    // Only include payments for active customers
+    if (!activeCustomerNames.includes(customerName)) {
+      return;
+    }
+    
     if (customerMetrics[customerName]) {
       customerMetrics[customerName].totalReceived += payment.amount;
     } else {

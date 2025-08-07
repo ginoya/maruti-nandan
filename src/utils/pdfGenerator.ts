@@ -324,6 +324,15 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
     tempContainer.appendChild(clonedElement);
     document.body.appendChild(tempContainer);
     
+    // Debug tempContainer before PDF generation
+    console.log('=== PDF GENERATION DEBUG ===');
+    console.log('tempContainer:', tempContainer);
+    console.log('tempContainer.innerHTML length:', tempContainer.innerHTML.length);
+    console.log('tempContainer.outerHTML:', tempContainer.outerHTML);
+    console.log('tempContainer dimensions:', tempContainer.offsetWidth, 'x', tempContainer.offsetHeight);
+    console.log('tempContainer children count:', tempContainer.children.length);
+    console.log('=== END DEBUG ===');
+
     const options: PDFOptions = {
       filename: filename || `invoice-${new Date().toISOString().split('T')[0]}.pdf`,
       margin: 4,
@@ -551,7 +560,19 @@ export const generateCustomerPaymentsPDF = async (
     tempContainer.appendChild(pdfContent);
     document.body.appendChild(tempContainer);
 
-    console.log('---->',pdfContent);
+    // Debug customer payments PDF before generation
+    console.log('=== CUSTOMER PAYMENTS PDF DEBUG ===');
+    console.log('tempContainer:', tempContainer);
+    console.log('pdfContent:', pdfContent);
+    console.log('tempContainer.innerHTML length:', tempContainer.innerHTML.length);
+    console.log('pdfContent.innerHTML length:', pdfContent.innerHTML.length);
+    console.log('tempContainer.outerHTML:', tempContainer.outerHTML);
+    console.log('pdfContent.outerHTML:', pdfContent.outerHTML);
+    console.log('tempContainer dimensions:', tempContainer.offsetWidth, 'x', tempContainer.offsetHeight);
+    console.log('pdfContent dimensions:', pdfContent.offsetWidth, 'x', pdfContent.offsetHeight);
+    console.log('tempContainer children count:', tempContainer.children.length);
+    console.log('pdfContent children count:', pdfContent.children.length);
+    console.log('=== END CUSTOMER PAYMENTS DEBUG ===');
 
     const options: PDFOptions = {
       filename: filename || `payments-${customerName}-${new Date().toISOString().split('T')[0]}.pdf`,

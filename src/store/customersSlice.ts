@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getCustomers } from '../services/customerService';
+import { getCustomers, softDeleteCustomer } from '../services/customerService';
 
 export interface Customer {
   id: string;
   name: string;
   createdAt: string;
   updatedAt: string;
+  isDeleted?: boolean;
+  deletedAt?: string;
 }
 
 interface CustomersState {
@@ -33,6 +35,19 @@ export const fetchCustomers = createAsyncThunk(
   }
 );
 
+// Async thunk to soft delete a customer
+export const deleteCustomer = createAsyncThunk(
+  'customers/deleteCustomer',
+  async (customerId: string) => {
+    try {
+      await softDeleteCustomer(customerId);
+      return customerId;
+    } catch (error) {
+      throw new Error('Failed to delete customer');
+    }
+  }
+);
+
 const customersSlice = createSlice({
   name: 'customers',
   initialState,
@@ -43,6 +58,9 @@ const customersSlice = createSlice({
     },
     addCustomerToState: (state, action) => {
       state.data.unshift(action.payload);
+    },
+    removeCustomerFromState: (state, action) => {
+      state.data = state.data.filter((customer: Customer) => customer.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -59,9 +77,22 @@ const customersSlice = createSlice({
       .addCase(fetchCustomers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch customers';
+      })
+      .addCase(deleteCustomer.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteCustomer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = state.data.filter((customer: Customer) => customer.id !== action.payload);
+        state.error = null;
+      })
+      .addCase(deleteCustomer.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to delete customer';
       });
   },
 });
 
-export const { clearCustomers, addCustomerToState } = customersSlice.actions;
+export const { clearCustomers, addCustomerToState, removeCustomerFromState } = customersSlice.actions;
 export default customersSlice.reducer; 

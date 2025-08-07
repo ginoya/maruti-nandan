@@ -1,103 +1,101 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import CustomersProvider from './components/CustomersProvider'
+import PedhisProvider from './components/PedhisProvider'
+import InvoicesProvider from './components/InvoicesProvider'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
-import PedhisProvider from './components/PedhisProvider'
-import CustomersProvider from './components/CustomersProvider'
-import InvoicesProvider from './components/InvoicesProvider'
-import Home from './pages/Home'
 import Login from './pages/Login'
-import Invoice from './pages/Invoice'
-import CreateInvoice from './pages/CreateInvoice'
-import ViewInvoice from './pages/ViewInvoice'
-import CustomerDetails from './pages/CustomerDetails'
-import Customers from './pages/Customers'
-import Payments from './pages/Payments'
+import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
-import DashboardOverview from './pages/dashboard/DashboardOverview'
-import './App.css'
+import Customers from './pages/Customers'
+import CustomerDetails from './pages/CustomerDetails'
+import Invoice from './pages/Invoice'
+import ViewInvoice from './pages/ViewInvoice'
+import CreateInvoice from './pages/CreateInvoice'
+import Payments from './pages/Payments'
+
 function App() {
   return (
     <AuthProvider>
-      <PedhisProvider>
+      <Router>
         <CustomersProvider>
-          <InvoicesProvider>
-            <Router>
-          <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={
-            <ProtectedRoute requireAuth={false}>
-              <Login />
-            </ProtectedRoute>
-          } />
-          
-          {/* Protected Routes */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          } />
-          <Route path="/home" element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          } />
-          
-          {/* Invoice Routes */}
-          <Route path="/invoice" element={
-            <ProtectedRoute>
-              <Invoice />
-            </ProtectedRoute>
-          } />
-          <Route path="/invoice/new" element={
-            <ProtectedRoute>
-              <CreateInvoice />
-            </ProtectedRoute>
-          } />
-          <Route path="/invoice/:id" element={
-            <ProtectedRoute>
-              <ViewInvoice />
-            </ProtectedRoute>
-          } />
-          
-          {/* Customers Routes */}
-          <Route path="/customers" element={
-            <ProtectedRoute>
-              <Customers />
-            </ProtectedRoute>
-          } />
-          <Route path="/customer/:customerName" element={
-            <ProtectedRoute>
-              <CustomerDetails />
-            </ProtectedRoute>
-          } />
-          
-          {/* Payments Routes */}
-          <Route path="/payments" element={
-            <ProtectedRoute>
-              <Payments />
-            </ProtectedRoute>
-          } />
-          
-          {/* Dashboard Routes with Nested Structure */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }>
-            <Route index element={<DashboardOverview />} />
-            <Route path="profile" element={<div className="p-xl text-center"><h2 className="text-2xl font-bold text-secondary-900">Profile Page</h2><p className="text-secondary-600">User profile management coming soon...</p></div>} />
-            <Route path="settings" element={<div className="p-xl text-center"><h2 className="text-2xl font-bold text-secondary-900">Dashboard Settings</h2><p className="text-secondary-600">Dashboard-specific settings coming soon...</p></div>} />
-          </Route>
-          
-          {/* Catch all route - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+          <PedhisProvider>
+            <InvoicesProvider>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<Login />} />
+                
+                {/* Protected Routes */}
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/home" element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Customers Routes */}
+                <Route path="/customers" element={
+                  <ProtectedRoute>
+                    <Customers />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/customer/:customerName" element={
+                  <ProtectedRoute>
+                    <CustomerDetails />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Invoice Routes */}
+                <Route path="/create-invoice" element={
+                  <ProtectedRoute>
+                    <CreateInvoice />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/invoice/new" element={
+                  <ProtectedRoute>
+                    <CreateInvoice />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/invoice/:id" element={
+                  <ProtectedRoute>
+                    <ViewInvoice />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/invoice" element={
+                  <ProtectedRoute>
+                    <Invoice />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Payments Routes */}
+                <Route path="/payments" element={
+                  <ProtectedRoute>
+                    <Payments />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </InvoicesProvider>
+          </PedhisProvider>
+        </CustomersProvider>
       </Router>
-      </InvoicesProvider>
-      </CustomersProvider>
-      </PedhisProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import Navigation from '../components/Navigation';
 import { Button, Input } from '../components/ui';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import { addCustomer } from '../services/customerService';
 import { useCustomers } from '../hooks/useCustomers';
 import { useAppDispatch } from '../store/hooks';
-import { addCustomerToState, fetchCustomers } from '../store/customersSlice';
+import { addCustomerToState, fetchCustomers, deleteCustomer } from '../store/customersSlice';
 
 const Customers: React.FC = () => {
   const [isAddCustomerModalOpen, setIsAddCustomerModalOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { customers, loading: customersLoading, error } = useCustomers();
   const dispatch = useAppDispatch();
 
@@ -51,6 +55,32 @@ const Customers: React.FC = () => {
     setIsAddCustomerModalOpen(false);
   };
 
+  const handleDeleteClick = (customer: { id: string; name: string }) => {
+    setCustomerToDelete(customer);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!customerToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await dispatch(deleteCustomer(customerToDelete.id)).unwrap();
+      setDeleteModalOpen(false);
+      setCustomerToDelete(null);
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      // TODO: Add proper error handling/notification
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setCustomerToDelete(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -85,30 +115,46 @@ const Customers: React.FC = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-                             <table className="w-full">
-                 <thead className="bg-gray-50 border-b border-gray-200">
-                   <tr>
-                     <th className="px-lg py-md text-left text-sm font-medium text-secondary-700">
-                       Sr. No.
-                     </th>
-                     <th className="px-lg py-md text-left text-sm font-medium text-secondary-700">
-                       Customer Name
-                     </th>
-                   </tr>
-                 </thead>
-                 <tbody className="divide-y divide-gray-200">
-                   {customers.map((customer:any, index:any) => (
-                     <tr key={customer.id} className="hover:bg-gray-50">
-                       <td className="px-lg py-md text-sm text-secondary-600">
-                         {index + 1}
-                       </td>
-                       <td className="px-lg py-md text-sm text-secondary-900 font-medium">
-                         {customer.name}
-                       </td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-lg py-md text-left text-sm font-medium text-secondary-700">
+                      Sr. No.
+                    </th>
+                    <th className="px-lg py-md text-left text-sm font-medium text-secondary-700">
+                      Customer Name
+                    </th>
+                    <th className="px-lg py-md text-right text-sm font-medium text-secondary-700">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {customers.map((customer:any, index:any) => (
+                    <tr key={customer.id} className="hover:bg-gray-50">
+                      <td className="px-lg py-md text-sm text-secondary-600">
+                        {index + 1}
+                      </td>
+                      <td className="px-lg py-md text-sm text-secondary-900 font-medium">
+                        {customer.name}
+                      </td>
+                      <td className="px-lg py-md text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteClick(customer)}
+                          className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                        >
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
@@ -168,6 +214,28 @@ const Customers: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Delete Confirmation Modal */}
+        <DeleteConfirmationModal
+          isOpen={deleteModalOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Customer"
+          message={
+            <div>
+              <p className="text-secondary-700 mb-sm">
+                Are you sure you want to delete this customer?
+              </p>
+              <p className="text-sm text-secondary-600">
+                <strong>Customer:</strong> {customerToDelete?.name}
+              </p>
+              {/* <p className="text-xs text-secondary-500 mt-sm">
+                This action will soft delete the customer. The customer will be hidden from the list but can be restored if needed.
+              </p> */}
+            </div>
+          }
+          isLoading={isDeleting}
+        />
 
         {/* Fixed Floating Action Button */}
         <div className="fixed bottom-6 right-6 z-40">

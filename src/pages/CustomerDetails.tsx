@@ -121,6 +121,21 @@ const CustomerDetails: React.FC = () => {
 
   const isLoading = invoicesLoading || paymentsLoading;
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+        <Navigation />
+        <div className="max-w-7xl mx-auto p-xl">
+          <div className="flex justify-center items-center py-xl">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if customer name is missing
   if (!customerName) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
@@ -128,8 +143,9 @@ const CustomerDetails: React.FC = () => {
         <div className="max-w-7xl mx-auto p-xl">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-800 mb-md">Customer not found</h1>
-            <Button variant="outline" onClick={() => navigate('/')}>
-              Back
+            <p className="text-gray-600 mb-lg">The customer you're looking for doesn't exist.</p>
+            <Button variant="outline" onClick={() => navigate('/customers')}>
+              Back to Customers
             </Button>
           </div>
         </div>
