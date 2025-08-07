@@ -12,9 +12,9 @@ export const useInvoices = () => {
     dispatch(fetchInvoices() as any);
   }, [dispatch]);
 
-  const saveInvoiceToFirebase = async (invoiceData: any) => {
+  const saveInvoiceToFirebase = async (invoiceData: any, incrementCounter: boolean = true) => {
     try {
-      await dispatch(saveInvoice(invoiceData) as any).unwrap();
+      await dispatch(saveInvoice({ invoiceData, incrementCounter }) as any).unwrap();
       return true;
     } catch (error) {
       console.error('Failed to save invoice:', error);

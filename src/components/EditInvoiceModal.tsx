@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dropdown, DatePicker } from './ui';
+import { Button, Dropdown, DatePicker, Input } from './ui';
 import { usePedhis } from '../hooks/usePedhis';
 import { useCustomers } from '../hooks/useCustomers';
 
@@ -14,6 +14,7 @@ export interface EditInvoiceData {
   business: string;
   customer: string;
   date: string;
+  invoiceNo?: string;
 }
 
 const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({ 
@@ -33,7 +34,8 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const [formData, setFormData] = useState<EditInvoiceData>({
     business: initialData?.business || '',
     customer: initialData?.customer || '',
-    date: initialData?.date || getTodayDate()
+    date: initialData?.date || getTodayDate(),
+    invoiceNo: initialData?.invoiceNo || ''
   });
 
   // Get pedhis data from Redux
@@ -158,7 +160,15 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             enableSearch={true}
           />
 
-
+          {/* Invoice Number - Optional */}
+          <Input
+            type="text"
+            label="Invoice Number (Optional)"
+            placeholder="Enter custom invoice number or leave empty for auto-generated"
+            value={formData.invoiceNo}
+            onChange={(e) => handleInputChange('invoiceNo', e.target.value)}
+            // helperText="Leave empty to use auto-generated invoice number"
+          />
 
           {/* Date */}
           <DatePicker

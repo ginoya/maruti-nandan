@@ -82,7 +82,7 @@ export const invoiceService = {
   },
 
   // Save invoice to Firebase
-  async saveInvoice(invoiceData: InvoiceData): Promise<string> {
+  async saveInvoice(invoiceData: InvoiceData, incrementCounter: boolean = true): Promise<string> {
     try {
       // Calculate grand total
       const grandTotal = invoiceData.items.reduce((total, item) => total + item.amount, 0);
@@ -96,8 +96,10 @@ export const invoiceService = {
 
       const docRef = await addDoc(collection(db, 'invoices'), invoiceWithTimestamps);
       
-      // Increment the invoice counter for this specific customer after successful save
-      await this.incrementInvoiceCounter(invoiceData.customer);
+      // Only increment the invoice counter if specified (for auto-generated invoices)
+      if (incrementCounter) {
+        await this.incrementInvoiceCounter(invoiceData.customer);
+      }
       
       return docRef.id;
     } catch (error) {

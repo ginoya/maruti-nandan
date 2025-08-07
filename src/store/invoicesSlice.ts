@@ -25,8 +25,9 @@ export const fetchInvoices = createAsyncThunk(
 // Async thunk to save invoice
 export const saveInvoice = createAsyncThunk(
   'invoices/saveInvoice',
-  async (invoiceData: any) => {
-    const invoiceId = await invoiceService.saveInvoice(invoiceData);
+  async (data: { invoiceData: any; incrementCounter?: boolean }) => {
+    const { invoiceData, incrementCounter = true } = data;
+    const invoiceId = await invoiceService.saveInvoice(invoiceData, incrementCounter);
     return { id: invoiceId, ...invoiceData };
   }
 );

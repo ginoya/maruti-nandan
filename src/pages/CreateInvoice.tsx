@@ -113,7 +113,9 @@ const CreateInvoice: React.FC = () => {
         // Convert YYYY-MM-DD to DD-MM-YYYY format
         const [year, month, day] = data.date.split('-');
         return `${day}-${month}-${year}`;
-      })()
+      })(),
+      // Set manual invoice number if provided, otherwise keep empty for auto-generation
+      invoiceNo: data.invoiceNo || ''
     });
     setIsEditModalOpen(false);
   };
@@ -125,26 +127,37 @@ const CreateInvoice: React.FC = () => {
     
     setIsGeneratingInvoice(true);
     try {
-      // Generate next invoice number for this customer
-      const nextInvoiceNumber = await invoiceService.generateNextInvoiceNumber(invoiceData.customer);
+      let finalInvoiceNumber: string;
       
-      // Update the invoice number in Redux
-      updateDetails({ invoiceNo: nextInvoiceNumber });
+      // Use manual invoice number if provided, otherwise generate one
+      let shouldIncrementCounter = false;
+      if (invoiceData.invoiceNo && invoiceData.invoiceNo.trim() !== '') {
+        finalInvoiceNumber = invoiceData.invoiceNo.trim();
+        // Don't increment counter for manual invoice numbers
+        shouldIncrementCounter = false;
+      } else {
+        // Generate next invoice number for this customer
+        finalInvoiceNumber = await invoiceService.generateNextInvoiceNumber(invoiceData.customer);
+        // Update the invoice number in Redux
+        updateDetails({ invoiceNo: finalInvoiceNumber });
+        // Increment counter for auto-generated invoice numbers
+        shouldIncrementCounter = true;
+      }
       
-      // Create a copy of invoiceData with the updated invoice number
+      // Create a copy of invoiceData with the final invoice number
       const invoiceDataWithNumber = {
         ...invoiceData,
-        invoiceNo: nextInvoiceNumber
+        invoiceNo: finalInvoiceNumber
       };
       
-      // Save the invoice to Firebase with the generated invoice number
-      const success = await saveInvoiceToFirebase(invoiceDataWithNumber);
+      // Save the invoice to Firebase with the invoice number
+      const success = await saveInvoiceToFirebase(invoiceDataWithNumber, shouldIncrementCounter);
       if (success) {
         // Fetch invoices again to refresh the data
         refetch();
         
         // Then generate the PDF using the same invoice number
-        await generateInvoicePDF(`invoice-${nextInvoiceNumber}-${invoiceData.invoiceDate}.pdf`);
+        await generateInvoicePDF(`invoice-${finalInvoiceNumber}-${invoiceData.invoiceDate}.pdf`);
         
         // You can add a success toast notification here
         
@@ -308,13 +321,14 @@ const CreateInvoice: React.FC = () => {
          onClose={handleCloseEditModal}
          onSave={handleSaveEditModal}
          initialData={{
-           business: '',
-           customer: '',
+           business: invoiceData.businessName,
+           customer: invoiceData.customer,
            date: (() => {
              // Convert DD-MM-YYYY to YYYY-MM-DD format
              const [day, month, year] = invoiceData.invoiceDate.split('-');
              return `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`;
-           })()
+           })(),
+           invoiceNo: invoiceData.invoiceNo
          }}
        />
 
