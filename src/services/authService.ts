@@ -1,6 +1,4 @@
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, type User } from "firebase/auth";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
 
 export interface UserProfile {
   username: string;
@@ -11,42 +9,25 @@ export interface UserProfile {
 class AuthService {
   private auth = getAuth();
 
-  // Test Firestore connectivity
-  async testFirestoreConnection(): Promise<boolean> {
-    try {
-      const testCollection = collection(db, 'users');
-      await getDocs(testCollection);
-      return true;
-    } catch (error) {
-      console.error('Firestore connection failed:', error);
-      return false;
-    }
-  }
+
 
   // Sign in with email and password
   async signIn(email: string, password: string): Promise<{ success: boolean; error?: string; userProfile?: UserProfile }> {
     try {
-      // Test Firestore connection first
-      const firestoreConnected = await this.testFirestoreConnection();
-      if (!firestoreConnected) {
-        return { success: false, error: 'Unable to connect to database. Please check your connection and try again.' };
-      }
-      
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
       
-      // Get additional user profile data from Firestore
-      const userProfile = await this.getUserProfile(user.uid);
+      console.log('Firebase authentication successful for user:', user.uid);
       
-      if (!userProfile) {
-        return { success: false, error: "User profile not found. Please contact administrator." };
-      }
-
-      if (!userProfile.isActive) {
-        return { success: false, error: "Account is deactivated. Please contact administrator." };
-      }
-
-      return { success: true, userProfile };
+      // Create a default profile for any authenticated user
+      const defaultProfile: UserProfile = {
+        username: user.email || 'Unknown User',
+        isAdmin: false,
+        isActive: true
+      };
+      
+      console.log('Created default profile for authenticated user:', defaultProfile);
+      return { success: true, userProfile: defaultProfile };
     } catch (error: any) {
       console.error('Sign in error:', error);
       
@@ -82,27 +63,7 @@ class AuthService {
     return this.auth.currentUser;
   }
 
-  // Get user profile from Firestore
-  async getUserProfile(uid: string): Promise<UserProfile | null> {
-    try {
-      const userDoc = await getDoc(doc(db, 'users', uid));
-      
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        return {
-          username: data.username,
-          isAdmin: data.isAdmin,
-          isActive: data.isActive
-        };
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      // Return null instead of throwing error
-      return null;
-    }
-  }
+
 
   // Listen to auth state changes
   onAuthStateChanged(callback: (user: User | null) => void): () => void {

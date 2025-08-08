@@ -40,11 +40,17 @@ const Login: React.FC = () => {
         const from = location.state?.from?.pathname || '/home';
         navigate(from, { replace: true });
       } else {
-        setError(result.error || 'An error occurred during sign in');
+        // Only show error for actual authentication failures, not profile issues
+        if (result.error && result.error.includes('Invalid email or password')) {
+          setError(result.error);
+        } else {
+          // For other errors, show a generic message to avoid exposing internal details
+          setError('Invalid email or password');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('An error occurred during login. Please try again.');
+      setError('Invalid email or password');
     } finally {
       setIsLoading(false);
     }

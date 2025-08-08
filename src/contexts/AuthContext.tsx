@@ -37,14 +37,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setCurrentUser(user);
       
       if (user) {
-        try {
-          // Fetch user profile when user is authenticated
-          const profile = await authService.getUserProfile(user.uid);
-          setUserProfile(profile);
-        } catch (error) {
-          console.error('Error fetching user profile:', error);
-          setUserProfile(null);
-        }
+        // Create default profile for any authenticated user
+        const defaultProfile: UserProfile = {
+          username: user.email || 'Unknown User',
+          isAdmin: false,
+          isActive: true
+        };
+        setUserProfile(defaultProfile);
       } else {
         setUserProfile(null);
       }

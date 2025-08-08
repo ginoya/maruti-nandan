@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchInvoices, softDeleteInvoice } from '../store/invoicesSlice';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
+
 interface GroupedInvoices {
   [businessName: string]: {
     customer: string;
@@ -115,12 +116,12 @@ const Invoice: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <Navigation />
       <div className="max-w-7xl mx-auto p-md">
-        <div className="flex justify-between items-center mb-lg">
-          <h1 className="text-3xl font-bold text-gray-800">Invoices</h1>
-          <Button variant="gradient" size="sm" className="px-lg py-sm" onClick={handleCreateInvoice}>
-            + New Invoice
-          </Button>
-        </div>
+                 <div className="flex justify-between items-center mb-lg">
+           <h1 className="text-3xl font-bold text-gray-800">Invoices</h1>
+           <Button variant="gradient" size="sm" className="px-lg py-sm" onClick={handleCreateInvoice}>
+             + New Invoice
+           </Button>
+         </div>
 
                  {Object.keys(groupedInvoices).length === 0 ? (
            <div className="text-center py-xl">

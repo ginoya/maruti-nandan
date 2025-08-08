@@ -23,7 +23,11 @@ function App() {
             <InvoicesProvider>
               <Routes>
                 {/* Public Routes */}
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={
+                  <ProtectedRoute requireAuth={false}>
+                    <Login />
+                  </ProtectedRoute>
+                } />
                 
                 {/* Protected Routes */}
                 <Route path="/" element={
