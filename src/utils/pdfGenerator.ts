@@ -486,6 +486,8 @@ export const generateCustomerPaymentsPDF = async (
       amountCell.textContent = new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
       }).format(payment.amount);
       amountCell.style.borderTop = '1px solid #000000';
       amountCell.style.borderLeft = '1px solid #000000';
@@ -531,6 +533,8 @@ export const generateCustomerPaymentsPDF = async (
     totalAmountCell.textContent = new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(totalAmount);
     totalAmountCell.style.borderTop = '1px solid #000000';
     totalAmountCell.style.borderLeft = '1px solid #000000';
