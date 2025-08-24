@@ -89,7 +89,18 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
       }));
     } else {
       // Handle numeric fields
-      const numericValue = typeof value === 'string' ? (value === '' ? 0 : Number(value)) : value;
+      let numericValue: number;
+      
+      if (typeof value === 'string') {
+        if (value === '' || value === '.') {
+          numericValue = 0;
+        } else {
+          // Handle decimal values properly
+          numericValue = parseFloat(value) || 0;
+        }
+      } else {
+        numericValue = value;
+      }
       
       setFormData(prev => ({
         ...prev,
@@ -108,6 +119,17 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Ensure all required fields are filled and valid
+    if (!formData.particular.trim()) {
+      return; // Don't submit if particular is empty
+    }
+    
+    // Validate numeric fields
+    if (formData.jodi <= 0 || formData.box <= 0 || formData.rate <= 0) {
+      return; // Don't submit if any numeric field is invalid
+    }
+    
     onSave(formData);
     handleClose();
   };
@@ -152,8 +174,16 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
                </label>
                                <Input
                   type="number"
+                  step="1"
+                  min="0"
                   value={inputValues.jodi}
                   onChange={(e) => handleInputChange('jodi', e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSubmit(e as any);
+                    }
+                  }}
                   placeholder="Enter jodi"
                   required
                 />
@@ -165,8 +195,16 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
                </label>
                                <Input
                   type="number"
+                  step="1"
+                  min="0"
                   value={inputValues.box}
                   onChange={(e) => handleInputChange('box', e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSubmit(e as any);
+                    }
+                  }}
                   placeholder="Enter box"
                   required
                 />
@@ -194,8 +232,16 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
                </label>
                                <Input
                   type="number"
+                  step="0.01"
+                  min="0"
                   value={inputValues.rate}
                   onChange={(e) => handleInputChange('rate', e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSubmit(e as any);
+                    }
+                  }}
                   placeholder="Enter rate"
                   required
                 />
