@@ -65,7 +65,7 @@ const Login: React.FC = () => {
             <h1 
               className="text-3xl font-bold tracking-[5px]"
               style={{
-                background: 'linear-gradient(to right, rgb(44, 62, 80), rgb(52, 152, 219))',
+                background: 'radial-gradient(circle farthest-corner at 6.3% 21.8%, rgba(236,6,117,1) 0%, rgba(13,32,67,1) 90%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text'

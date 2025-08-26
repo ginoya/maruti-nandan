@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navigation from '../components/Navigation';
-import { Button, Tab, TabList, TabItem, TabPanel } from '../components/ui';
+import { Button, Tab, TabList, TabPanel } from '../components/ui';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchInvoices, softDeleteInvoice } from '../store/invoicesSlice';
@@ -21,7 +21,7 @@ const Invoice: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { invoices, loading, error } = useAppSelector((state) => state.invoices);
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: string; invoiceNo: string; customer: string; amount: number } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -67,7 +67,7 @@ const Invoice: React.FC = () => {
   // Group invoices by business name
   const groupedInvoices: GroupedInvoices = invoices.reduce((acc, invoice) => {
     const businessName = invoice.businessName || 'Unknown Business';
-    const totalAmount = invoice.items.reduce((sum, item) => sum + item.amount, 0);
+    const totalAmount = invoice.amount;
     
     if (!acc[businessName]) {
       acc[businessName] = [];
@@ -75,7 +75,7 @@ const Invoice: React.FC = () => {
     
     acc[businessName].push({
       customer: invoice.customer,
-      amount: totalAmount,
+      amount: totalAmount || 0,
       invoiceNo: invoice.invoiceNo,
       invoiceDate: invoice.invoiceDate,
       id: invoice.id || ''
@@ -112,6 +112,8 @@ const Invoice: React.FC = () => {
     );
   }
 
+  console.log('invoices-->', invoices, groupedInvoices)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <Navigation />
@@ -133,14 +135,15 @@ const Invoice: React.FC = () => {
          ) : (
            <Tab className="bg-white rounded-lg shadow-md">
                            <TabList className="">
-               {Object.keys(groupedInvoices).map((businessName, index) => (
-                 <TabItem
-                   key={businessName}
-                   isActive={activeTab === index}
-                   onClick={() => setActiveTab(index)}
-                 >
-                   {businessName}
-                 </TabItem>
+               {Object.keys(groupedInvoices).map(() => (
+                //  <TabItem
+                //    key={businessName}
+                //    isActive={activeTab === index}
+                //    onClick={() => setActiveTab(index)}
+                //  >
+                //    {businessName}
+                //    </TabItem>
+                <>  </>
                ))}
              </TabList>
              
@@ -153,7 +156,7 @@ const Invoice: React.FC = () => {
                         <th className="text-left p-md font-medium text-gray-700">Invoice No</th>
                         <th className="text-left p-md font-medium text-gray-700">Customer Name</th>
                         <th className="text-right p-md font-medium text-gray-700">Amount</th>
-                        <th className="text-left p-md font-medium text-gray-700">Date</th>
+                        <th className="text-left p-md font-medium text-gray-700 whitespace-nowrap">Date</th>
                         <th className="text-center p-md font-medium text-gray-700">Action</th>
                       </tr>
                     </thead>
@@ -166,9 +169,9 @@ const Invoice: React.FC = () => {
                           <td className="p-md text-gray-600">{invoice.invoiceNo}</td>
                           <td className="p-md text-gray-800">{invoice.customer}</td>
                           <td className="p-md text-right font-medium text-gray-800">
-                            ₹{invoice.amount.toLocaleString()}
+                            ₹{invoice.amount?.toLocaleString()}<>{console.log('invoice.amount-->', invoice)}</>
                           </td>
-                          <td className="p-md text-gray-600">{invoice.invoiceDate}</td>
+                          <td className="p-md text-gray-600 whitespace-nowrap">{invoice.invoiceDate}</td>
                           <td className="p-md text-center">
                             <div className="flex gap-sm justify-center">
                               <button

@@ -18,57 +18,51 @@ const EditInvoiceItemModal: React.FC<EditInvoiceItemModalProps> = ({
   const [isClosing, setIsClosing] = useState(false);
   
   const [formData, setFormData] = useState<AddInvoiceItemData>({
-    particular: '',
-    jodi: 0,
-    box: 0,
-    jodiTotal: 0,
-    rate: 0,
-    amount: 0
+    date: new Date().toISOString().split('T')[0],
+    geru: 0,
+    white: 0,
+    jaipuri: 0,
+    damar: 0,
+    gold: 0,
+    total: 0
   });
 
   // Local state for input display (to show empty strings instead of 0)
   const [inputValues, setInputValues] = useState({
-    jodi: '',
-    box: '',
-    rate: ''
+    geru: '',
+    white: '',
+    jaipuri: '',
+    damar: '',
+    gold: ''
   });
 
   // Initialize form data when modal opens or initialData changes
   useEffect(() => {
     if (isOpen && initialData) {
       setFormData({
-        particular: initialData.particular,
-        jodi: initialData.jodi,
-        box: initialData.box,
-        jodiTotal: initialData.jodiTotal,
-        rate: initialData.rate,
-        amount: initialData.amount
+        date: initialData.date,
+        geru: initialData.geru,
+        white: initialData.white,
+        jaipuri: initialData.jaipuri,
+        damar: initialData.damar,
+        gold: initialData.gold,
+        total: initialData.total
       });
       setInputValues({
-        jodi: initialData.jodi.toString(),
-        box: initialData.box.toString(),
-        rate: initialData.rate.toString()
+        geru: String(initialData.geru ?? ''),
+        white: String(initialData.white ?? ''),
+        jaipuri: String(initialData.jaipuri ?? ''),
+        damar: String(initialData.damar ?? ''),
+        gold: String(initialData.gold ?? ''),
       });
     }
   }, [isOpen, initialData]);
 
-  // Auto-calculate jodiTotal when jodi or box changes
+  // Auto-calculate total when categories change
   useEffect(() => {
-    const jodiTotal = formData.jodi * formData.box;
-    setFormData(prev => ({
-      ...prev,
-      jodiTotal
-    }));
-  }, [formData.jodi, formData.box]);
-
-  // Auto-calculate amount when jodiTotal or rate changes
-  useEffect(() => {
-    const amount = formData.jodiTotal * formData.rate;
-    setFormData(prev => ({
-      ...prev,
-      amount
-    }));
-  }, [formData.jodiTotal, formData.rate]);
+    const total = (formData.geru || 0) + (formData.white || 0) + (formData.jaipuri || 0) + (formData.damar || 0) + (formData.gold || 0);
+    setFormData(prev => ({ ...prev, total }));
+  }, [formData.geru, formData.white, formData.jaipuri, formData.damar, formData.gold]);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -79,33 +73,21 @@ const EditInvoiceItemModal: React.FC<EditInvoiceItemModalProps> = ({
   };
 
   const handleInputChange = (field: keyof AddInvoiceItemData, value: string | number) => {
-    if (field === 'particular') {
-      // Handle string field directly
-      setFormData(prev => ({
-        ...prev,
-        [field]: String(value)
-      }));
+    if (field === 'date') {
+      setFormData(prev => ({ ...prev, date: String(value) }));
     } else {
-      // Handle numeric fields
-      const numericValue = typeof value === 'string' ? (value === '' ? 0 : Number(value)) : value;
-      
-      setFormData(prev => ({
-        ...prev,
-        [field]: numericValue
-      }));
-
-      // Update input display values for numeric fields
-      if (field === 'jodi' || field === 'box' || field === 'rate') {
-        setInputValues(prev => ({
-          ...prev,
-          [field]: typeof value === 'string' ? value : value.toString()
-        }));
+      const numericValue = typeof value === 'string' ? (value === '' || value === '.' ? 0 : parseFloat(value) || 0) : value;
+      setFormData(prev => ({ ...prev, [field]: numericValue }));
+      if (field === 'geru' || field === 'white' || field === 'jaipuri' || field === 'damar' || field === 'gold') {
+        setInputValues(prev => ({ ...prev, [field]: typeof value === 'string' ? value : value.toString() }));
       }
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const hasAny = [formData.geru, formData.white, formData.jaipuri, formData.damar, formData.gold].some(v => (v || 0) > 0);
+    if (!hasAny) return;
     onSave(formData);
     handleClose();
   };
@@ -128,107 +110,46 @@ const EditInvoiceItemModal: React.FC<EditInvoiceItemModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-lg">
-          {/* Particular */}
+          {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-sm">
-              Particular
-            </label>
-            <Input
-              type="text"
-              value={formData.particular}
-              onChange={(e) => handleInputChange('particular', e.target.value)}
-              placeholder="Enter particular"
-              required
-            />
+            <label className="block text-sm font-medium text-secondary-700 mb-sm">Date</label>
+            <Input type="date" value={formData.date} onChange={(e) => handleInputChange('date', e.target.value)} required />
           </div>
 
-          {/* Jodi, Box, and Jodi Total in same line */}
-          <div className="grid grid-cols-3 gap-md">
+          {/* Category inputs and Total */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-md">
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-sm">
-                Jodi
-              </label>
-              <Input
-                type="number"
-                value={inputValues.jodi}
-                onChange={(e) => handleInputChange('jodi', e.target.value)}
-                placeholder="Enter jodi"
-                required
-              />
+              <label className="block text-sm font-medium text-secondary-700 mb-sm">Geru</label>
+              <Input type="number" value={inputValues.geru} onChange={(e) => handleInputChange('geru', e.target.value)} placeholder="Enter geru" required />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-sm">
-                Box
-              </label>
-              <Input
-                type="number"
-                value={inputValues.box}
-                onChange={(e) => handleInputChange('box', e.target.value)}
-                placeholder="Enter box"
-                required
-              />
+              <label className="block text-sm font-medium text-secondary-700 mb-sm">White</label>
+              <Input type="number" value={inputValues.white} onChange={(e) => handleInputChange('white', e.target.value)} placeholder="Enter white" required />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-sm">
-                Jodi Total
-              </label>
-              <Input
-                type="number"
-                value={formData.jodiTotal}
-                disabled
-                className="bg-gray-100 cursor-not-allowed"
-                placeholder="Auto-calculated"
-              />
+              <label className="block text-sm font-medium text-secondary-700 mb-sm">Jaipuri</label>
+              <Input type="number" value={inputValues.jaipuri} onChange={(e) => handleInputChange('jaipuri', e.target.value)} placeholder="Enter jaipuri" required />
             </div>
-          </div>
-
-          {/* Rate and Amount in same line */}
-          <div className="grid grid-cols-2 gap-md">
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-sm">
-                Rate
-              </label>
-              <Input
-                type="number"
-                value={inputValues.rate}
-                onChange={(e) => handleInputChange('rate', e.target.value)}
-                placeholder="Enter rate"
-                required
-              />
+              <label className="block text-sm font-medium text-secondary-700 mb-sm">Damar</label>
+              <Input type="number" value={inputValues.damar} onChange={(e) => handleInputChange('damar', e.target.value)} placeholder="Enter damar" required />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-sm">
-                Amount
-              </label>
-              <Input
-                type="number"
-                value={formData.amount}
-                disabled
-                className="bg-gray-100 cursor-not-allowed"
-                placeholder="Auto-calculated"
-              />
+              <label className="block text-sm font-medium text-secondary-700 mb-sm">Gold</label>
+              <Input type="number" value={inputValues.gold} onChange={(e) => handleInputChange('gold', e.target.value)} placeholder="Enter gold" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-sm">Total</label>
+              <Input type="number" value={formData.total} disabled className="bg-gray-100 cursor-not-allowed" placeholder="Auto-calculated" />
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex justify-between pt-md">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              size='sm'
-            >
+            <Button type="button" variant="outline" onClick={handleClose} size='sm'>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              variant="gradient"
-              size='sm'
-              className='px-xl'
-            >
+            <Button type="submit" variant="gradient" size='sm' className='px-xl'>
               Save
             </Button>
           </div>

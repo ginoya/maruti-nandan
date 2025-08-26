@@ -3,12 +3,13 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 export interface InvoiceItem {
   id: number;
   no: string;
-  particular: string;
-  jodi: number;
-  box: number;
-  jodiTotal: number;
-  rate: number;
-  amount: number;
+  date: string; // DD-MM-YYYY
+  geru: number;
+  white: number;
+  jaipuri: number;
+  damar: number;
+  gold: number;
+  total: number;
 }
 
 export interface InvoiceData {
@@ -17,6 +18,12 @@ export interface InvoiceData {
   invoiceNo: string;
   invoiceDate: string;
   items: InvoiceItem[];
+  geruRate: number;
+  whiteRate: number;
+  jaipuriRate: number;
+  damarRate: number;
+  goldRate: number;
+  grandTotal?: number;
 }
 
 const initialState: InvoiceData = {
@@ -42,7 +49,12 @@ const initialState: InvoiceData = {
   //   jodiTotal: item.jodi * item.box,
   //   amount: item.jodiTotal * item.rate
   // })),
-  items: []
+  items: [],
+  geruRate: 0,
+  whiteRate: 0,
+  jaipuriRate: 0,
+  damarRate: 0,
+  goldRate: 0,
 };
 
 const invoiceSlice = createSlice({
@@ -52,25 +64,42 @@ const invoiceSlice = createSlice({
     updateInvoiceDetails: (state, action: PayloadAction<Partial<Pick<InvoiceData, 'businessName' | 'customer' | 'invoiceNo' | 'invoiceDate'>>>) => {
       return { ...state, ...action.payload };
     },
+    updateInvoiceRates: (state, action: PayloadAction<Partial<Pick<InvoiceData, 'geruRate' | 'whiteRate' | 'jaipuriRate' | 'damarRate' | 'goldRate'>>>) => {
+      return { ...state, ...action.payload };
+    },
     updateInvoiceItem: (state, action: PayloadAction<{ id: number; item: Partial<InvoiceItem> }>) => {
       const { id, item } = action.payload;
       const index = state.items.findIndex(item => item.id === id);
       if (index !== -1) {
         state.items[index] = { ...state.items[index], ...item };
-        // Recalculate totals
+        // Recalculate total
         const updatedItem = state.items[index];
-        updatedItem.jodiTotal = updatedItem.jodi * updatedItem.box;
-        updatedItem.amount = updatedItem.jodiTotal * updatedItem.rate;
+        updatedItem.total =
+          (updatedItem.geru || 0) +
+          (updatedItem.white || 0) +
+          (updatedItem.jaipuri || 0) +
+          (updatedItem.damar || 0) +
+          (updatedItem.gold || 0);
       }
     },
-    addInvoiceItem: (state, action: PayloadAction<Omit<InvoiceItem, 'id'>>) => {
+    addInvoiceItem: (state, action: PayloadAction<Omit<InvoiceItem, 'id' | 'no' | 'total'>>) => {
       const newId = state.items.length > 0 ? Math.max(...state.items.map(item => item.id)) + 1 : 1;
+      const payload = action.payload as any;
       const newItem: InvoiceItem = {
-        ...action.payload,
         id: newId,
         no: (state.items.length + 1).toString(),
-        jodiTotal: action.payload.jodi * action.payload.box,
-        amount: (action.payload.jodi * action.payload.box) * action.payload.rate
+        date: payload.date,
+        geru: payload.geru ?? 0,
+        white: payload.white ?? 0,
+        jaipuri: payload.jaipuri ?? 0,
+        damar: payload.damar ?? 0,
+        gold: payload.gold ?? 0,
+        total:
+          (payload.geru ?? 0) +
+          (payload.white ?? 0) +
+          (payload.jaipuri ?? 0) +
+          (payload.damar ?? 0) +
+          (payload.gold ?? 0),
       };
       state.items.push(newItem);
     },
@@ -90,7 +119,8 @@ export const {
   updateInvoiceItem, 
   addInvoiceItem, 
   removeInvoiceItem,
-  resetInvoice 
+  resetInvoice,
+  updateInvoiceRates,
 } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer; 
