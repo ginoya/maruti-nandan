@@ -120,7 +120,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   };
 
   if (!isOpen && !isClosing) return null;
-
+  console.log('businesses', businesses)
   return (
     <div className="fixed inset-0 bg-black bg-black/50 flex items-end justify-center z-50">
       <div className="bg-white rounded-t-lg shadow-strong px-xl pt-xl py-lg pb-lg w-full transform transition-transform duration-500 ease-out animate-slide-up">
@@ -138,7 +138,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-lg">
           {/* Business Dropdown - No Search */}
-          <Dropdown
+          {
+            businesses && businesses.length > 1 && (
+              <Dropdown
             options={businesses}
             value={formData.business}
             onValueChange={(value) => handleInputChange('business', value)}
@@ -146,6 +148,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             placeholder={pedhisLoading ? "Loading businesses..." : "Select Business"}
             enableSearch={false}
           />
+            )
+          }
+          
 
           {/* Customer Dropdown - With Search */}
           <Dropdown

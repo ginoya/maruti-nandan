@@ -71,7 +71,7 @@ const Login: React.FC = () => {
                 backgroundClip: 'text'
               }}
             >
-              MARUTI NANDAN
+              Santkrupa Gold
             </h1>
             <p className="text-secondary-600 mt-sm">
               Sign in to your account

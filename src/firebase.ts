@@ -5,12 +5,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCd_IgCpTPSG2mtUht2x-exb7mvpcVZ5hA",
-  authDomain: "record-register-c4962.firebaseapp.com",
-  projectId: "record-register-c4962",
-  storageBucket: "record-register-c4962.firebasestorage.app",
-  messagingSenderId: "436701962277",
-  appId: "1:436701962277:web:b1428cd8f4d0c92277dfcc",
+  apiKey: "AIzaSyBhfh0L1wkWQk_Rjr3uwZyi15NPZ0Nx66A",
+  authDomain: "santkrupa-gold.firebaseapp.com",
+  projectId: "santkrupa-gold",
+  storageBucket: "santkrupa-gold.firebasestorage.app",
+  messagingSenderId: "569024133631",
+  appId: "1:569024133631:web:3311d6483a22dad91bcfca"
 };
 
 // Initialize Firebase

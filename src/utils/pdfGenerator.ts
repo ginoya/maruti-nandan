@@ -392,7 +392,7 @@ export const generateCustomerPaymentsPDF = async (
     header.style.paddingBottom = '10px';
 
     const companyName = document.createElement('h1');
-    companyName.textContent = 'MARUTI NANDAN IMITATION';
+    companyName.textContent = 'Santkrupa Gold';
     companyName.style.fontSize = '18px';
     companyName.style.fontWeight = 'bold';
     companyName.style.margin = '0 0 10px 0';

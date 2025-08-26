@@ -48,8 +48,8 @@ const Navigation: React.FC = () => {
                   backgroundClip: 'text'
                 }}
               >
-                MARUTI NANDAN
-              </h1>
+                SANTKRUPA GOLD
+                </h1>
             </Link>
           </div>
 
