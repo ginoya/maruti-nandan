@@ -112,8 +112,6 @@ const Invoice: React.FC = () => {
     );
   }
 
-  console.log('invoices-->', invoices, groupedInvoices)
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <Navigation />

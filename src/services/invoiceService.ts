@@ -87,14 +87,12 @@ export const invoiceService = {
     try {
       // Calculate grand total
       // const grandTotal = invoiceData.items.reduce((total, item) => total + item.amount, 0);
-      console.log('grandTotal-->', invoiceData)
       const invoiceWithTimestamps: FirebaseInvoiceData = {
         ...invoiceData,
         amount: invoiceData.grandTotal,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      console.log('invoiceWithTimestamps-->', invoiceWithTimestamps)
       const docRef = await addDoc(collection(db, 'invoices'), invoiceWithTimestamps);
       
       // Only increment the invoice counter if specified (for auto-generated invoices)

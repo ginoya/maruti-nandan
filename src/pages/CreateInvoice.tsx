@@ -167,7 +167,6 @@ const CreateInvoice: React.FC = () => {
         invoiceNo: finalInvoiceNumber,
         grandTotal: totals.grandTotal
       };
-      console.log('invoiceDataWithNumber', invoiceDataWithNumber)
       // Save the invoice to Firebase with the invoice number
       const success = await saveInvoiceToFirebase(invoiceDataWithNumber, shouldIncrementCounter);
       if (success) {
