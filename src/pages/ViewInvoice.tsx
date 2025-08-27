@@ -174,7 +174,7 @@ const ViewInvoice: React.FC = () => {
                   ))}
                   {/* Totals Row */}
                   <tr className="bg-gray-50">
-                    <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700">Total Weight</td>
+                    <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total Weight</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geru}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.white}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuri}</span></td>
@@ -184,7 +184,7 @@ const ViewInvoice: React.FC = () => {
                   </tr>
 
                   <tr className="bg-gray-50">
-                    <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700">Rate</td>
+                    <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Rate</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate}</span></td>
@@ -194,7 +194,7 @@ const ViewInvoice: React.FC = () => {
                   </tr>
 
                   <tr className="bg-gray-50">
-                    <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700">Total</td>
+                    <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate * totals.geru}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate * totals.white}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate * totals.jaipuri}</span></td>
@@ -203,8 +203,8 @@ const ViewInvoice: React.FC = () => {
                     <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.grandTotal}</span></td>
                   </tr>
 
-                  <tr className="bg-gray-50 font-bold">
-                    <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={4}>Grand Total</td>
+                  <tr className="bg-gray-50 font-bold bt-1">
+                  <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={4}>Grand Total</td>
                     <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={3}>{totals.grandTotal}</td>
                   </tr>
                 </tbody>

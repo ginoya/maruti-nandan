@@ -313,6 +313,10 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
         border-right: none !important;
       }
 
+      .bt-1{
+        border-top: 1px solid #000000 !important;
+      }
+
     `;
 
     const tempContainer = document.createElement('div');
