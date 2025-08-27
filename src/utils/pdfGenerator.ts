@@ -30,27 +30,27 @@ export const generatePDF = async (
     // Clone the element to avoid modifying the original
     const clonedElement = element.cloneNode(true) as HTMLElement;
 
-    // Remove any problematic CSS that might cause issues
-    const styleSheets = document.styleSheets;
-    for (let i = 0; i < styleSheets.length; i++) {
-      try {
-        const rules = styleSheets[i].cssRules || styleSheets[i].rules;
-        if (rules) {
-          for (let j = 0; j < rules.length; j++) {
-            const rule = rules[j] as CSSStyleRule;
-            if (rule.style && rule.style.color) {
-              // Replace problematic color functions with standard colors
-              if (rule.style.color.includes('oklch') || rule.style.color.includes('hsl')) {
-                rule.style.color = '#000000';
-              }
-            }
-          }
-        }
-      } catch (e) {
-        // Skip cross-origin stylesheets
-        continue;
+    // Inject a print-safe CSS reset to avoid unsupported color functions (e.g., oklch)
+    const resetStyle = document.createElement('style');
+    resetStyle.textContent = `
+      .__pdf-reset * {
+        color: #000000 !important;
+        background: #ffffff !important;
+        border-color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
       }
-    }
+      .__pdf-reset [class*="bg-"] { background: #ffffff !important; }
+      .__pdf-reset [class*="text-"] { color: #000000 !important; }
+      .__pdf-reset [class*="from-"] { background-image: none !important; }
+      .__pdf-reset [class*="to-"] { background-image: none !important; }
+      .__pdf-reset [class*="via-"] { background-image: none !important; }
+      .__pdf-reset [style*="oklch"],
+      .__pdf-reset [style*="hsl"] {
+        color: #000000 !important;
+        background: #ffffff !important;
+      }
+    `;
 
     const defaultOptions = {
       filename: 'invoice.pdf',
@@ -89,13 +89,255 @@ export const generatePDF = async (
     tempContainer.style.position = 'absolute';
     tempContainer.style.left = '-9999px';
     tempContainer.style.top = '-9999px';
-    tempContainer.appendChild(clonedElement);
+    // Wrap cloned element with a reset container
+    const wrapper = document.createElement('div');
+    wrapper.className = '__pdf-reset';
+    wrapper.appendChild(clonedElement);
+    tempContainer.appendChild(resetStyle);
+    tempContainer.appendChild(wrapper);
     document.body.appendChild(tempContainer);
 
     try {
-      await html2pdf().set(opt).from(clonedElement).save();
+      await html2pdf().set(opt).from(wrapper).save();
     } finally {
       // Clean up the temporary container
+      document.body.removeChild(tempContainer);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Generate a PDF for a report section using styling similar to invoice PDF
+export const generateReportPDF = async (
+  elementSelector: string,
+  filename?: string,
+  reportOpts?: { dateRange?: string }
+): Promise<void> => {
+  try {
+    const element = document.querySelector(elementSelector);
+    if (!element) {
+      throw new Error(`Report element not found for selector ${elementSelector}`);
+    }
+
+    const clonedElement = element.cloneNode(true) as HTMLElement;
+
+    // Apply strong print styles similar to invoice PDF
+    const style = document.createElement('style');
+    style.textContent = `
+      * {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        background: none !important;
+        color: #000000 !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 12px !important;
+        font-weight: normal !important;
+        text-align: left !important;
+        vertical-align: middle !important;
+        line-height: normal !important;
+        text-decoration: none !important;
+        list-style: none !important;
+        box-sizing: border-box !important;
+        border-radius: 0 !important;
+      }
+
+      .print-container {
+        border: 2px solid #000000 !important;
+        margin: 10px !important;
+        background-color: #ffffff !important;
+      }
+
+      .report-header {
+        text-align: center !important;
+        margin-bottom: 8px !important;
+        border-bottom: 2px solid #000000 !important;
+        padding-bottom: 6px !important;
+      }
+
+      .brand-title { font-size: 22px !important; font-weight: bold !important; text-align: center !important;
+              padding-top: 12px !important;
+ }
+      .report-subtitle { font-size: 14px !important; font-weight: bold !important; margin-top: 4px !important; text-align: center !important; }
+
+      table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+        margin: 0 !important;
+        table-layout: fixed !important;
+      }
+
+      th, td {
+        border-top: 1px solid #000000 !important;
+        border-right: 1px solid #000000 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        padding: 4px !important;
+        word-break: break-word !important;
+      }
+
+      th { background-color: #f0f0f0 !important; font-weight: bold !important; }
+
+      th:first-child, td:first-child { border-left: none !important; }
+      th:last-child, td:last-child { border-right: none !important; }
+
+      .totals-row { background-color: #f8f8f8 !important; font-weight: bold !important; }
+
+      /* Specific widths for report table to avoid overflow */
+      .report-table col:nth-child(1) { width: 10% !important; }
+      .report-table col:nth-child(2) { width: 34% !important; }
+      .report-table col:nth-child(3) { width: 14% !important; }
+      .report-table col:nth-child(4) { width: 14% !important; }
+      .report-table col:nth-child(5) { width: 14% !important; }
+      .report-table col:nth-child(6) { width: 14% !important; }
+
+      .cards {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        margin-top: 8px !important;
+      }
+
+      .card { border: 1px solid #000000 !important; padding: 8px !important; }
+      .card-title { font-size: 12px !important; color: #000000 !important; margin-bottom: 4px !important; }
+      .card-value { font-size: 16px !important; font-weight: bold !important; }
+
+      /* Hide elements we don't want in the report PDF */
+      .print-hide { display: none !important; }
+      tfoot{border-bottom: 1px solid #000000 !important;}
+
+      /* Summary bar styling for PDF */
+      .summary-bar {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        margin: 8px 0 !important;
+        padding: 6px 8px !important;
+        border: 1px solid #000000 !important;
+      }
+
+      .pdf-flex{
+        display: flex !important;
+      }
+
+      .pdf-summary{
+          font-size: 20px !important;
+    justify-content: flex-end;
+    padding: 4px 12px !important;
+      }
+
+      .pr-4-br{
+      padding-right: 4px !important;
+    // border-right: 1px solid black !important;
+      }
+
+      .pl-4{
+      padding-left: 4px !important;
+      }
+
+      .mtn-4{
+          margin-top: -4px !important;
+          }
+
+                .print-hide {
+        display: none !important;
+      }
+    `;
+
+    // Build a minimal print container to avoid layout noise
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.backgroundColor = '#ffffff';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'print-container';
+
+    // Create header matching invoice style
+    const title = document.createElement('div');
+    title.className = 'report-header';
+    const brand = document.createElement('div');
+    brand.className = 'brand-title';
+    brand.textContent = 'Santkrupa Gold';
+    const sub = document.createElement('div');
+    sub.className = 'report-subtitle';
+    sub.textContent = reportOpts?.dateRange || '';
+    title.appendChild(brand);
+    title.appendChild(sub);
+    wrapper.appendChild(title);
+
+    // Ensure report table uses fixed columns by injecting colgroup if missing
+    const tableEl = clonedElement.querySelector('table');
+    if (tableEl && !tableEl.querySelector('colgroup')) {
+      const colgroup = document.createElement('colgroup');
+      for (let i = 0; i < 6; i++) {
+        const col = document.createElement('col');
+        colgroup.appendChild(col);
+      }
+      tableEl.insertBefore(colgroup, tableEl.firstChild);
+      tableEl.classList.add('report-table');
+    }
+
+    // Build a single-line summary bar: "Total Weight - X | Average - Y"
+    try {
+      const allDivs = Array.from(clonedElement.querySelectorAll('div')) as HTMLElement[];
+      const weightCard = allDivs.find((d) => d.querySelector('h3')?.textContent?.trim() === 'Total Weight');
+      const avgCard = allDivs.find((d) => d.querySelector('h3')?.textContent?.trim()?.startsWith('Average'));
+      if (weightCard && avgCard) {
+        const container = weightCard.parentElement as HTMLElement;
+        const weightVal = weightCard.querySelector('p')?.textContent?.trim() || '';
+        const avgVal = avgCard.querySelector('p')?.textContent?.trim() || '';
+
+        const bar = document.createElement('div');
+        bar.className = 'summary-bar';
+        const left = document.createElement('span');
+        left.textContent = `Total Weight - ${weightVal}`;
+        const sep = document.createElement('span');
+        sep.textContent = ' | ';
+        const right = document.createElement('span');
+        right.textContent = `Average - ${avgVal}`;
+        bar.appendChild(left);
+        bar.appendChild(sep);
+        bar.appendChild(right);
+
+        // Insert bar before the cards container and remove the container
+        container.parentElement?.insertBefore(bar, container);
+        container.remove();
+      }
+    } catch {}
+
+    // Hide non-average metric cards if any remain
+    Array.from(clonedElement.querySelectorAll('.print-hide')).forEach((el) => {
+      (el as HTMLElement).style.display = 'none';
+    });
+
+    wrapper.appendChild(clonedElement as HTMLElement);
+    tempContainer.appendChild(style);
+    tempContainer.appendChild(wrapper);
+    document.body.appendChild(tempContainer);
+
+    // Log the full HTML (including CSS) used for generating the report PDF
+    try {
+      // eslint-disable-next-line no-console
+    } catch {}
+
+    const pdfOpts: PDFOptions = {
+      filename: filename || `report-${new Date().toISOString().split('T')[0]}.pdf`,
+      margin: 4,
+      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' }
+    };
+
+    // Match invoice formation: rely on A5 page sizing and scaling (no forced width)
+    clonedElement.style.width = '100%';
+
+    try {
+      await html2pdf().set(pdfOpts).from(wrapper).save();
+    } finally {
       document.body.removeChild(tempContainer);
     }
   } catch (error) {

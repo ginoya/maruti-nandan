@@ -13,6 +13,7 @@ import Invoice from './pages/Invoice'
 import ViewInvoice from './pages/ViewInvoice'
 import CreateInvoice from './pages/CreateInvoice'
 import Payments from './pages/Payments'
+import MonthwiseReport from './pages/MonthwiseReport'
 
 function App() {
   return (
@@ -90,6 +91,13 @@ function App() {
                 <Route path="/payments" element={
                   <ProtectedRoute>
                     <Payments />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Reports Routes */}
+                <Route path="/reports" element={
+                  <ProtectedRoute>
+                    <MonthwiseReport />
                   </ProtectedRoute>
                 } />
               </Routes>

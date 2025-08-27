@@ -18,6 +18,7 @@ const Navigation: React.FC = () => {
     { label: 'Invoice', path: '/invoice', icon: '📄' },
     { label: 'Customers', path: '/customers', icon: '👥' },
     { label: 'Payments', path: '/payments', icon: '💳' },
+    { label: 'Reports', path: '/reports', icon: '📊' },
   ];
 
   const handleLogout = async () => {
