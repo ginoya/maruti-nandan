@@ -237,7 +237,7 @@ const CreateInvoice: React.FC = () => {
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Jaipuri</th>
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Damar</th>
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Gold</th>
-                  <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700">Total</th>
+                  <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700 br-none">Total</th>
                   <th className="border border-blue-300 px-md py-sm text-sm font-medium text-gray-700 print-hide">Action</th>
                 </tr>
               </thead>
@@ -252,7 +252,7 @@ const CreateInvoice: React.FC = () => {
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.jaipuri}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.damar}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.gold}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.total}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 br-none"><span className='number-span'>{item.total}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 print-hide">
                       <div className="flex gap-sm">
                         <button
@@ -286,7 +286,7 @@ const CreateInvoice: React.FC = () => {
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuri}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damar}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.gold}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geru + totals.white + totals.jaipuri + totals.damar + totals.gold}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"><span className='number-span'>{totals.geru + totals.white + totals.jaipuri + totals.damar + totals.gold}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 
@@ -298,7 +298,7 @@ const CreateInvoice: React.FC = () => {
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 
@@ -310,13 +310,13 @@ const CreateInvoice: React.FC = () => {
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate * totals.jaipuri}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate * totals.damar}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate * totals.gold}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.grandTotal}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"><span className='number-span'>{totals.grandTotal}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 
                 <tr className="bg-gray-50 font-bold bt-1">
                   <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={4}>Grand Total</td>
-                  <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={3}>{totals.grandTotal}</td>
+                  <td className="border border-blue-300 px-md py-sm text-lg text-gray-700 br-none" colSpan={3}>{totals.grandTotal}</td>
                 </tr>
               </tbody>
             </table>

@@ -241,7 +241,7 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
       }
       
       .number-span{
-        margin-top: -10px !important;
+        margin-top: -8px !important;
         display: inline-block !important;
       }
       
@@ -315,6 +315,10 @@ export const generateInvoicePDF = async (filename?: string): Promise<void> => {
 
       .bt-1{
         border-top: 1px solid #000000 !important;
+      }
+
+      .br-none{
+        border-right: none !important;
       }
 
     `;
