@@ -123,8 +123,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     }));
   };
 
-  console.log('forma',formData)
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
@@ -188,8 +186,8 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
 
           {/* Date */}
           <DatePicker
-            value={formData.date ? formatDateToYYYYMMDD(formData.date) : ''}
-            onChange={(value) => handleInputChange('date', formatDateToDDMMYYYY(value))}
+            value={formData.date}
+            onChange={(value) => handleInputChange('date', value)}
             label="Date"
             placeholder="Select date"
           />

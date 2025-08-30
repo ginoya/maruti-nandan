@@ -130,11 +130,11 @@ const Home: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-lg">
                 <div className="flex items-center justify-between mb-md">
                   <h3 className="text-base font-semibold text-secondary-900">Total Turnover</h3>
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-600 text-sm">₹</span>
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 text-sm">₹</span>
                   </div>
                 </div>
-                <div className="text-xl font-bold text-primary-600 mb-xs">
+                <div className="text-xl font-bold text-blue-600 mb-xs">
                   {formatCurrency(invoiceMetrics.totalTurnover)}
                 </div>
                 <p className="text-xs text-secondary-600">Total invoice value</p>
@@ -186,7 +186,7 @@ const Home: React.FC = () => {
                         </div>
                         <div className="text-right">
                           <div className="text-xs text-secondary-600 mb-xs">Turnover</div>
-                          <div className="text-lg font-bold text-primary-600">
+                          <div className="text-lg font-bold text-blue-600">
                             {formatCurrency(metrics.totalTurnover)}
                           </div>
                         </div>

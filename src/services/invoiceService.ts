@@ -110,7 +110,7 @@ export const invoiceService = {
   // Get all invoices (excluding soft deleted ones)
   async getAllInvoices(): Promise<FirebaseInvoiceData[]> {
     try {
-      const q = query(collection(db, 'invoices'), orderBy('createdAt', 'desc'));
+      const q = query(collection(db, 'invoices'), orderBy('updatedAt', 'desc'));
       const querySnapshot = await getDocs(q);
       const invoices: FirebaseInvoiceData[] = [];
       

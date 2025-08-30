@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { type RootState } from '../store';
 import { fetchInvoices, saveInvoice, clearError } from '../store/invoicesSlice';
+import { invoiceService } from '../services/invoiceService';
 
 export const useInvoices = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,16 @@ export const useInvoices = () => {
     }
   };
 
+  const updateInvoiceInFirebase = async (invoiceId: string, invoiceData: any) => {
+    try {
+      await invoiceService.updateInvoice(invoiceId, invoiceData);
+      return true;
+    } catch (error) {
+      console.error('Failed to update invoice:', error);
+      return false;
+    }
+  };
+
   const clearErrorMessage = () => {
     dispatch(clearError());
   };
@@ -31,6 +42,7 @@ export const useInvoices = () => {
     loading,
     error,
     saveInvoiceToFirebase,
+    updateInvoiceInFirebase,
     clearErrorMessage,
     refetch: () => dispatch(fetchInvoices() as any)
   };

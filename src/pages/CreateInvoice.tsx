@@ -14,9 +14,14 @@ import { useInvoice } from '../hooks/useInvoice';
 import { useInvoices } from '../hooks/useInvoices';
 import { invoiceService } from '../services/invoiceService';
 
-const CreateInvoice: React.FC = () => {
-  const { invoiceData, calculateTotals, updateDetails, addItem, removeItem, updateItem, reset, updateRates } = useInvoice();
-  const { saveInvoiceToFirebase, refetch } = useInvoices();
+interface InvoiceFormProps {
+  mode: 'create' | 'edit';
+  invoiceId?: string; // For edit mode
+}
+
+const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
+  const { invoiceData, calculateTotals, updateDetails, addItem, removeItem, updateItem, reset, updateRates, loadInvoice, isLoading } = useInvoice();
+  const { saveInvoiceToFirebase, refetch, updateInvoiceInFirebase } = useInvoices();
   const navigate = useNavigate();
 
   // Modal state
@@ -26,6 +31,27 @@ const CreateInvoice: React.FC = () => {
   const [isRatesModalOpen, setIsRatesModalOpen] = useState(false);
   const [selectedItemForEdit, setSelectedItemForEdit] = useState<AddInvoiceItemData | null>(null);
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
+
+  // Load existing invoice data when in edit mode
+  useEffect(() => {
+    if (mode === 'edit' && invoiceId) {
+      loadInvoice(invoiceId);
+    }
+  }, []);
+
+  // Auto-open edit modal for new invoices only
+  useEffect(() => {
+    if (mode === 'create' && !invoiceData.businessName) {
+      setIsEditModalOpen(true);
+    }
+  }, [mode, invoiceData.businessName]);
+
+  // Also ensure modal opens when component mounts in create mode (but not edit mode)
+  useEffect(() => {
+    if (mode === 'create' && !invoiceData.businessName) {
+      setIsEditModalOpen(true);
+    }
+  }, [mode, invoiceData.businessName]);
 
   const handleEditInvoice = () => {
     setIsEditModalOpen(true);
@@ -115,20 +141,24 @@ const CreateInvoice: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if(!invoiceData.businessName){
-      handleEditInvoice();
-    }
-  }, []);
-
   const handleSaveEditModal = (data: EditInvoiceData) => {
     // Update invoice details in Redux
     updateDetails({
       businessName: data.business,
       customer: data.customer,
       invoiceDate: (() => {
-        // Convert YYYY-MM-DD to DD-MM-YYYY format
-        const [year, month, day] = data.date.split('-');
+        // Convert YYYY-MM-DD (from DatePicker) to DD-MM-YYYY format (for invoice)
+        if (data.date && data.date.includes('-')) {
+          const [year, month, day] = data.date.split('-');
+          if (year && month && day) {
+            return `${day}-${month}-${year}`;
+          }
+        }
+        // If no valid date, return today's date in DD-MM-YYYY format
+        const today = new Date();
+        const day = today.getDate().toString().padStart(2, '0');
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const year = today.getFullYear();
         return `${day}-${month}-${year}`;
       })(),
       // Set manual invoice number if provided, otherwise keep empty for auto-generation
@@ -137,9 +167,15 @@ const CreateInvoice: React.FC = () => {
     setIsEditModalOpen(false);
   };
 
+  useEffect(()=>{
+    return () =>{
+      reset();
+    }
+  },[])
+
   const totals = calculateTotals();
 
-  const handleGenerateInvoice = async () => {
+  const handleSaveInvoice = async () => {
     if (isGeneratingInvoice) return; // Prevent multiple clicks
     
     setIsGeneratingInvoice(true);
@@ -165,34 +201,67 @@ const CreateInvoice: React.FC = () => {
       const invoiceDataWithNumber = {
         ...invoiceData,
         invoiceNo: finalInvoiceNumber,
-        grandTotal: totals.grandTotal
+        grandTotal: totals.grandTotal,
+        amount: totals.grandTotal
       };
-      // Save the invoice to Firebase with the invoice number
-      const success = await saveInvoiceToFirebase(invoiceDataWithNumber, shouldIncrementCounter);
+
+      let success = false;
+      
+      if (mode === 'edit' && invoiceId) {
+        // Update existing invoice
+        success = await updateInvoiceInFirebase(invoiceId, invoiceDataWithNumber);
+      } else {
+        // Create new invoice
+        success = await saveInvoiceToFirebase(invoiceDataWithNumber, shouldIncrementCounter);
+      }
+
       if (success) {
         // Fetch invoices again to refresh the data
         refetch();
         
-        // Then generate the PDF using the same invoice number
-        await generateInvoicePDF(`invoice-${finalInvoiceNumber}-${invoiceData.invoiceDate}.pdf`);
-        
         // You can add a success toast notification here
         
-        // Reset the invoice slice after successful save and print
-        reset();
-        
-        // Redirect to invoices page after successful save and print
-        navigate('/invoice');
+        if (mode === 'create') {
+          // Reset the invoice slice after successful save (only for new invoices)
+          reset();
+          // Small delay to ensure reset completes before navigation
+          setTimeout(() => {
+            // Redirect to invoices page after successful save
+            navigate('/invoice');
+          }, 100);
+        } else {
+          navigate('/invoice');
+        }
       } else {
-        console.error('Failed to save invoice to Firebase');
+        console.error(`Failed to ${mode === 'edit' ? 'update' : 'save'} invoice to Firebase`);
       }
     } catch (error) {
-      console.error('Failed to save invoice or generate PDF:', error);
+      console.error(`Failed to ${mode === 'edit' ? 'update' : 'save'} invoice:`, error);
       // You can add an error toast notification here
     } finally {
       setIsGeneratingInvoice(false);
     }
   };
+
+  const handlePrintInvoice = async () => {
+    try {
+      // Generate PDF using current invoice data
+      await generateInvoicePDF(`invoice-${invoiceData.invoiceNo || 'draft'}-${invoiceData.invoiceDate}.pdf`);
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+    }
+  };
+
+  if(isLoading){
+      return (
+                //  <div className={`bg-white rounded-t-lg shadow-strong px-xl pt-xl pb-lg w-full transform transition-transform duration-500 ease-out animate-slide-up'}`}>
+          <div className='flex justify-center items-center h-screen'> <div className="text-center">
+             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto mb-md"></div>
+             <p className="text-secondary-600">Loading Invoice...</p>
+           </div>
+       </div>
+      );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -204,7 +273,7 @@ const CreateInvoice: React.FC = () => {
           {/* Invoice Header */}
           <div className="text-center mb-xl">
             <div className="text-lg text-red-900 mb-sm">શ્રી ગણેશાય નમઃ</div>
-            <h2 className="text-2xl font-bold mb-lg text-gray-800" >{invoiceData.businessName}</h2>
+            <h2 className="text-2xl font-bold mb-lg text-gray-800" >{mode === 'create' ? 'Create Invoice' : 'Edit Invoice'}</h2>
           </div>
 
           {/* Client and Invoice Information Table */}
@@ -360,14 +429,28 @@ const CreateInvoice: React.FC = () => {
             </svg>
           </Button>
         </div>
-        <Button 
-          variant="gradient" 
-          size="md" 
-          onClick={handleGenerateInvoice}
-          disabled={isGeneratingInvoice}
-        >
-          {isGeneratingInvoice ? 'Saving & Printing...' : 'Print'}
-        </Button>
+        <div className="flex gap-sm">
+          <Button 
+            variant="gradient" 
+            size="md" 
+            onClick={handleSaveInvoice}
+            disabled={isGeneratingInvoice}
+            className="px-lg"
+          >
+            {isGeneratingInvoice 
+              ? (mode === 'edit' ? 'Updating...' : 'Saving...') 
+              : (mode === 'edit' ? 'Update' : 'Save')
+            }
+          </Button>
+          <Button 
+            variant="outline" 
+            size="md" 
+            onClick={handlePrintInvoice}
+            className="px-lg"
+          >
+            Print
+          </Button>
+        </div>
       </div>
 
       {/* Edit Invoice Modal */}
@@ -379,9 +462,16 @@ const CreateInvoice: React.FC = () => {
           business: invoiceData.businessName,
           customer: invoiceData.customer,
           date: (() => {
-            // Convert DD-MM-YYYY to YYYY-MM-DD format
-            const [day, month, year] = invoiceData.invoiceDate.split('-');
-            return `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`;
+            // Convert DD-MM-YYYY to YYYY-MM-DD format for the DatePicker
+            if (invoiceData.invoiceDate && invoiceData.invoiceDate.includes('-')) {
+              const [day, month, year] = invoiceData.invoiceDate.split('-');
+              if (day && month && year) {
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+              }
+            }
+            // If no valid date, return today's date in YYYY-MM-DD format
+            const today = new Date();
+            return today.toISOString().split('T')[0];
           })(),
           invoiceNo: invoiceData.invoiceNo
         }}
@@ -427,4 +517,4 @@ const CreateInvoice: React.FC = () => {
   );
 };
 
-export default CreateInvoice; 
+export default InvoiceForm; 

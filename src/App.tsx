@@ -12,6 +12,7 @@ import CustomerDetails from './pages/CustomerDetails'
 import Invoice from './pages/Invoice'
 import ViewInvoice from './pages/ViewInvoice'
 import CreateInvoice from './pages/CreateInvoice'
+import EditInvoice from './pages/EditInvoice'
 import Payments from './pages/Payments'
 import MonthwiseReport from './pages/MonthwiseReport'
 
@@ -71,13 +72,19 @@ function App() {
                 
                 <Route path="/invoice/new" element={
                   <ProtectedRoute>
-                    <CreateInvoice />
+                    <CreateInvoice mode='create'/>
                   </ProtectedRoute>
                 } />
                 
                 <Route path="/invoice/:id" element={
                   <ProtectedRoute>
                     <ViewInvoice />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/invoice/:id/edit" element={
+                  <ProtectedRoute>
+                    <EditInvoice />
                   </ProtectedRoute>
                 } />
                 

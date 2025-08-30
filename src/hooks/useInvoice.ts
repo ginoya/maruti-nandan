@@ -6,12 +6,16 @@ import {
   addInvoiceItem, 
   removeInvoiceItem,
   resetInvoice,
+  setInvoiceData,
   type InvoiceData,
   type InvoiceItem 
 } from '../store/invoiceSlice';
 import { updateInvoiceRates } from '../store/invoiceSlice';
+import { invoiceService } from '../services/invoiceService';
+import { useState } from 'react';
 
 export const useInvoice = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch();
   const invoiceData = useSelector((state: RootState) => state.invoice);
 
@@ -37,6 +41,19 @@ export const useInvoice = () => {
 
   const reset = () => {
     dispatch(resetInvoice());
+  };
+
+  const loadInvoice = async (invoiceId: string) => {
+    try {
+      setIsLoading(true)
+      const invoice = await invoiceService.getInvoiceById(invoiceId);
+      if (invoice) {
+        dispatch(setInvoiceData(invoice));
+      }
+      setIsLoading(false)
+    } catch (error) {
+      console.error('Error loading invoice:', error);
+    }
   };
 
   const calculateTotals = () => {
@@ -83,6 +100,8 @@ export const useInvoice = () => {
     addItem,
     removeItem,
     reset,
-    calculateTotals
+    loadInvoice,
+    calculateTotals,
+    isLoading
   };
 }; 

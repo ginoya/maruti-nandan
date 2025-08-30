@@ -67,6 +67,9 @@ const invoiceSlice = createSlice({
     updateInvoiceRates: (state, action: PayloadAction<Partial<Pick<InvoiceData, 'geruRate' | 'whiteRate' | 'jaipuriRate' | 'damarRate' | 'goldRate'>>>) => {
       return { ...state, ...action.payload };
     },
+    setInvoiceData: (state, action: PayloadAction<InvoiceData>) => {
+      return { ...action.payload };
+    },
     updateInvoiceItem: (state, action: PayloadAction<{ id: number; item: Partial<InvoiceItem> }>) => {
       const { id, item } = action.payload;
       const index = state.items.findIndex(item => item.id === id);
@@ -121,6 +124,7 @@ export const {
   removeInvoiceItem,
   resetInvoice,
   updateInvoiceRates,
+  setInvoiceData,
 } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer; 

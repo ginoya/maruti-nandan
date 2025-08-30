@@ -97,3 +97,20 @@ export const isValidDate = (dateString: string): boolean => {
   
   return day <= daysInMonth[month - 1];
 }; 
+
+
+export function formatDateToMonthYear(dateStr: string): string {
+  // Expecting input as "dd-mm-yyyy"
+  const [day, month, year] = dateStr.split("-").map(Number);
+
+  // Month names
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  // Adjust month index since Date months are 0-based
+  const monthName = monthNames[month - 1];
+
+  return `${monthName} - ${year}`;
+}
