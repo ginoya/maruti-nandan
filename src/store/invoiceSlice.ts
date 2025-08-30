@@ -67,7 +67,7 @@ const invoiceSlice = createSlice({
     updateInvoiceRates: (state, action: PayloadAction<Partial<Pick<InvoiceData, 'geruRate' | 'whiteRate' | 'jaipuriRate' | 'damarRate' | 'goldRate'>>>) => {
       return { ...state, ...action.payload };
     },
-    setInvoiceData: (state, action: PayloadAction<InvoiceData>) => {
+    setInvoiceData: (_state, action: PayloadAction<InvoiceData>) => {
       return { ...action.payload };
     },
     updateInvoiceItem: (state, action: PayloadAction<{ id: number; item: Partial<InvoiceItem> }>) => {

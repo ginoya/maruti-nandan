@@ -66,7 +66,7 @@ function App() {
                 {/* Invoice Routes */}
                 <Route path="/create-invoice" element={
                   <ProtectedRoute>
-                    <CreateInvoice />
+                    <CreateInvoice mode='create'/>
                   </ProtectedRoute>
                 } />
                 

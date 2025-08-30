@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, DatePicker, Input } from './ui';
 import { usePedhis } from '../hooks/usePedhis';
 import { useCustomers } from '../hooks/useCustomers';
-import { formatDateToYYYYMMDD, formatDateToDDMMYYYY, getTodayDate } from '../utils/dateUtils';
+import { getTodayDate } from '../utils/dateUtils';
 
 interface EditInvoiceModalProps {
   isOpen: boolean;

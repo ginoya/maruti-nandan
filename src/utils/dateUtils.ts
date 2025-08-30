@@ -101,7 +101,7 @@ export const isValidDate = (dateString: string): boolean => {
 
 export function formatDateToMonthYear(dateStr: string): string {
   // Expecting input as "dd-mm-yyyy"
-  const [day, month, year] = dateStr.split("-").map(Number);
+  const [ _day, month, year] = dateStr.split("-").map(Number);
 
   // Month names
   const monthNames = [
