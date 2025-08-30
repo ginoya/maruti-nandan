@@ -24,7 +24,7 @@ const MonthwiseReport: React.FC = () => {
   
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [monthwiseData, setMonthwiseData] = useState<MonthwiseCustomerData[]>([]);
-
+  const [customer, setCustomer] = useState('')
   // Helper to parse DD-MM-YYYY into Date
   const parseDDMMYYYY = (value: string): Date | null => {
     if (!value || typeof value !== 'string') return null;
@@ -213,6 +213,16 @@ const MonthwiseReport: React.FC = () => {
   const totalPending = monthwiseData.reduce((sum, row) => sum + row.totalPaymentPending, 0);
   const averageAmountPerKg = totalWeight > 0 ? totalAmount / totalWeight : 0;
 
+
+  const getCutomerOptions = [...monthwiseData.map((row)=>{
+    return {
+      label:row.customerName,
+      value:row.customerName
+    }
+  }),{label:'All', value:''}];
+
+  const filteredMonthWiseData = customer === '' ? monthwiseData : monthwiseData.filter((row)=>row.customerName === customer)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <Navigation />
@@ -239,6 +249,26 @@ const MonthwiseReport: React.FC = () => {
           </div>
         </div>
 
+        <div>
+        <div className="flex items-center space-x-md">
+            {/* <label htmlFor="month-select" className="text-sm font-medium text-gray-700">
+              Select Month:
+            </label> */}
+            <select
+              id="customer-select"
+              value={customer}
+              onChange={(e) => setCustomer(e.target.value)}
+              className="px-md py-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            >
+              {getCutomerOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Printable Content Wrapper */}
         <div className="report-print">
         {/* Report Table */}
@@ -256,19 +286,19 @@ const MonthwiseReport: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {monthwiseData.length === 0 ? (
+                {filteredMonthWiseData.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-xl text-gray-500">
                       No data available for the selected month
                     </td>
                   </tr>
                 ) : (
-                  monthwiseData.map((row) => (
+                  filteredMonthWiseData.map((row, index) => (
                     <tr 
                       key={row.customerName} 
                       className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                     >
-                      <td className="p-md text-gray-600 font-medium">{row.srNo}</td>
+                      <td className="p-md text-gray-600 font-medium">{index + 1}</td>
                       <td className="p-md text-gray-800 font-medium">{row.customerName}</td>
                       <td className="p-md text-right text-gray-600">
                         {Math.round(row.totalWeight).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
@@ -287,7 +317,7 @@ const MonthwiseReport: React.FC = () => {
                 )}
               </tbody>
               <tfoot>
-                <tr className="bg-gray-50 border-t border-gray-200">
+                <tr className={`bg-gray-50 border-t border-gray-200 ${customer === '' ? '' : 'print-hide'}`}>
                   <td colSpan={2} className="p-md font-semibold text-gray-700">
                     Totals
                   </td>
@@ -329,7 +359,7 @@ const MonthwiseReport: React.FC = () => {
               ₹{Math.round(totalPending).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-lg pdf-flex">
+          <div className={`bg-white rounded-lg shadow-md p-lg pdf-flex  ${customer === '' ? '' : 'print-hide'}`}>
             <h3 className="text-sm font-medium text-gray-500 mb-sm pr-4-br mtn-4">Average (₹/kg)</h3>
             <p className="text-2xl font-bold text-gray-900 pl-4 mtn-4">
               ₹{Math.round(averageAmountPerKg).toLocaleString('en-IN', { maximumFractionDigits: 0 })}

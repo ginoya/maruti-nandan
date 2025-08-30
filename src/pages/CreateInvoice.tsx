@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Button } from '../components/ui';
-import { generateInvoicePDF } from '../utils/pdfGenerator';
+// import { generateInvoicePDF } from '../utils/pdfGenerator';
 import EditInvoiceModal from '../components/EditInvoiceModal';
 import type { EditInvoiceData } from '../components/EditInvoiceModal';
 import AddInvoiceItemModal from '../components/AddInvoiceItemModal';
@@ -243,14 +243,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
     }
   };
 
-  const handlePrintInvoice = async () => {
-    try {
-      // Generate PDF using current invoice data
-      await generateInvoicePDF(`invoice-${invoiceData.invoiceNo || 'draft'}-${invoiceData.invoiceDate}.pdf`);
-    } catch (error) {
-      console.error('Failed to generate PDF:', error);
-    }
-  };
+  // const handlePrintInvoice = async () => {
+  //   try {
+  //     // Generate PDF using current invoice data
+  //     await generateInvoicePDF(`invoice-${invoiceData.invoiceNo || 'draft'}-${invoiceData.invoiceDate}.pdf`);
+  //   } catch (error) {
+  //     console.error('Failed to generate PDF:', error);
+  //   }
+  // };
 
   if(isLoading){
       return (
@@ -361,11 +361,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
                 <tr className="bg-gray-50">
                   {/* <td className="border border-blue-300 px-md text-sm text-gray-700"></td> */}
                   <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Rate</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate.toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate.toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate.toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate.toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate.toFixed(2)}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
@@ -373,18 +373,18 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
                 <tr className="bg-gray-50">
                   {/* <td className="border border-blue-300 px-md text-sm text-gray-700"></td> */}
                   <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate * totals.geru}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate * totals.white}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate * totals.jaipuri}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate * totals.damar}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate * totals.gold}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"><span className='number-span'>{totals.grandTotal}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.geruRate * totals.geru).toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.whiteRate * totals.white).toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.jaipuriRate * totals.jaipuri).toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.damarRate * totals.damar).toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.goldRate * totals.gold).toFixed(2)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"><span className='number-span'>{(totals.grandTotal)?.toFixed(2)}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 
                 <tr className="bg-gray-50 font-bold bt-1">
                   <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={4}>Grand Total</td>
-                  <td className="border border-blue-300 px-md py-sm text-lg text-gray-700 br-none" colSpan={3}>{totals.grandTotal}</td>
+                  <td className="border border-blue-300 px-md py-sm text-lg text-gray-700 br-none" colSpan={3}>{(totals.grandTotal)?.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
@@ -442,14 +442,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
               : (mode === 'edit' ? 'Update' : 'Save')
             }
           </Button>
-          <Button 
+          {/* <Button 
             variant="outline" 
             size="md" 
             onClick={handlePrintInvoice}
             className="px-lg"
           >
             Print
-          </Button>
+          </Button> */}
         </div>
       </div>
 

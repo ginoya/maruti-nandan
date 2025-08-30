@@ -185,27 +185,27 @@ const ViewInvoice: React.FC = () => {
 
                   <tr className="bg-gray-50">
                     <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Rate</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate.toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate.toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate.toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate.toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate.toFixed(2)}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
                   </tr>
 
                   <tr className="bg-gray-50">
                     <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate * totals.geru}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate * totals.white}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate * totals.jaipuri}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate * totals.damar}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate * totals.gold}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.grandTotal}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.geruRate * totals.geru).toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.whiteRate * totals.white).toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.jaipuriRate * totals.jaipuri).toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.damarRate * totals.damar).toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.goldRate * totals.gold).toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.grandTotal).toFixed(2)}</span></td>
                   </tr>
 
                   <tr className="bg-gray-50 font-bold bt-1">
                   <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={4}>Grand Total</td>
-                    <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={3}>{totals.grandTotal}</td>
+                    <td className="border border-blue-300 px-md py-sm text-lg text-gray-700" colSpan={3}>{(totals.grandTotal).toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
