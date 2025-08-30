@@ -162,7 +162,7 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
               <label className="block text-sm font-medium text-secondary-700 mb-sm">Geru</label>
               <Input
                 type="number"
-                step="0.01"
+                step="0.001"
                 min="0"
                 value={inputValues.geru}
                 onChange={(e) => handleInputChange('geru', e.target.value)}
@@ -174,7 +174,7 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
               <label className="block text-sm font-medium text-secondary-700 mb-sm">White</label>
               <Input
                 type="number"
-                step="0.01"
+                step="0.001"
                 min="0"
                 value={inputValues.white}
                 onChange={(e) => handleInputChange('white', e.target.value)}
@@ -186,7 +186,7 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
               <label className="block text-sm font-medium text-secondary-700 mb-sm">Jaipuri</label>
               <Input
                 type="number"
-                step="0.01"
+                step="0.001"
                 min="0"
                 value={inputValues.jaipuri}
                 onChange={(e) => handleInputChange('jaipuri', e.target.value)}
@@ -198,7 +198,7 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
               <label className="block text-sm font-medium text-secondary-700 mb-sm">Damar</label>
               <Input
                 type="number"
-                step="0.01"
+                step="0.001"
                 min="0"
                 value={inputValues.damar}
                 onChange={(e) => handleInputChange('damar', e.target.value)}
@@ -210,7 +210,7 @@ const AddInvoiceItemModal: React.FC<AddInvoiceItemModalProps> = ({
               <label className="block text-sm font-medium text-secondary-700 mb-sm">Gold</label>
               <Input
                 type="number"
-                step="0.01"
+                step="0.001"
                 min="0"
                 value={inputValues.gold}
                 onChange={(e) => handleInputChange('gold', e.target.value)}

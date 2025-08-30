@@ -5,6 +5,7 @@ import { Button } from '../components/ui';
 import { generateInvoicePDF } from '../utils/pdfGenerator';
 import { invoiceService } from '../services/invoiceService';
 import type { FirebaseInvoiceData } from '../services/invoiceService';
+import { zeroToDash } from '../utils/dateUtils';
 
 const ViewInvoice: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -164,43 +165,43 @@ const ViewInvoice: React.FC = () => {
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.no}</span></td>
                       <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 whitespace-nowrap"><span className='number-span'>{item.date}</span></td>
-                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.geru}</span></td>
-                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.white}</span></td>
-                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.jaipuri}</span></td>
-                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.damar}</span></td>
-                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.gold}</span></td>
-                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.total}</span></td>
+                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{zeroToDash(item.geru.toFixed(3))}</span></td>
+                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{zeroToDash(item.white.toFixed(3))}</span></td>
+                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{zeroToDash(item.jaipuri.toFixed(3))}</span></td>
+                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{zeroToDash(item.damar.toFixed(3))}</span></td>
+                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{zeroToDash(item.gold.toFixed(3))}</span></td>
+                      <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{zeroToDash(item.total.toFixed(3))}</span></td>
                     </tr>
                   ))}
                   {/* Totals Row */}
                   <tr className="bg-gray-50">
                     <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total Weight</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geru}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.white}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuri}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damar}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.gold}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geru + totals.white + totals.jaipuri + totals.damar + totals.gold}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.geru.toFixed(3))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.white.toFixed(3))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.jaipuri.toFixed(3))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.damar.toFixed(3))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.gold.toFixed(3))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.geru + totals.white + totals.jaipuri + totals.damar + totals.gold).toFixed(3))}</span></td>
                   </tr>
 
                   <tr className="bg-gray-50">
                     <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Rate</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geruRate.toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.whiteRate.toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuriRate.toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damarRate.toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.goldRate.toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.geruRate?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.whiteRate?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.jaipuriRate?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.damarRate?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash(totals.goldRate?.toFixed(2))}</span></td>
                     <td className="border border-blue-300 px-md text-sm text-gray-700"></td>
                   </tr>
 
                   <tr className="bg-gray-50">
                     <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.geruRate * totals.geru).toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.whiteRate * totals.white).toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.jaipuriRate * totals.jaipuri).toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.damarRate * totals.damar).toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.goldRate * totals.gold).toFixed(2)}</span></td>
-                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{(totals.grandTotal).toFixed(2)}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.geruRate * totals.geru)?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.whiteRate * totals.white)?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.jaipuriRate * totals.jaipuri)?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.damarRate * totals.damar)?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.goldRate * totals.gold)?.toFixed(2))}</span></td>
+                    <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{zeroToDash((totals.grandTotal)?.toFixed(2))}</span></td>
                   </tr>
 
                   <tr className="bg-gray-50 font-bold bt-1">

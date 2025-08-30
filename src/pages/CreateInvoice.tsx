@@ -315,12 +315,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
                   <tr key={item.id} className="hover:bg-gray-50">
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.no}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 whitespace-nowrap"><span className='number-span'>{item.date}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.geru}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.white}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.jaipuri}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.damar}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.gold}</span></td>
-                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 br-none"><span className='number-span'>{item.total}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.geru.toFixed(3)}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.white.toFixed(3)}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.jaipuri.toFixed(3)}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.damar.toFixed(3)}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700"><span className='number-span'>{item.gold.toFixed(3)}</span></td>
+                    <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 br-none"><span className='number-span'>{item.total.toFixed(3)}</span></td>
                     <td className="border border-blue-300 px-md py-sm text-sm text-gray-700 print-hide">
                       <div className="flex gap-sm">
                         <button
@@ -349,12 +349,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ mode, invoiceId }) => {
                 <tr className="bg-gray-50">
                   {/* <td className="border border-blue-300 px-md text-sm text-gray-700"></td> */}
                   <td colSpan={2} className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>Total Weight</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geru}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.white}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuri}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damar}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.gold}</span></td>
-                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"><span className='number-span'>{totals.geru + totals.white + totals.jaipuri + totals.damar + totals.gold}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.geru.toFixed(3)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.white.toFixed(3)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.jaipuri.toFixed(3)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.damar.toFixed(3)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700"><span className='number-span'>{totals.gold.toFixed(3)}</span></td>
+                  <td className="border border-blue-300 px-md text-sm text-gray-700 br-none"><span className='number-span'>{(totals.geru + totals.white + totals.jaipuri + totals.damar + totals.gold).toFixed(3)}</span></td>
                   <td className="border border-blue-300 px-md text-sm text-gray-700 print-hide"></td>
                 </tr>
 

@@ -114,3 +114,8 @@ export function formatDateToMonthYear(dateStr: string): string {
 
   return `${monthName} - ${year}`;
 }
+
+export const zeroToDash = (value:any) =>{
+  
+  return parseFloat(value) ? value : '-';
+}
