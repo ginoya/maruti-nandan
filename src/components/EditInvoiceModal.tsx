@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, DatePicker, Input } from './ui';
 import { usePedhis } from '../hooks/usePedhis';
 import { useCustomers } from '../hooks/useCustomers';
+import { formatDateToYYYYMMDD, formatDateToDDMMYYYY, getTodayDate } from '../utils/dateUtils';
 
 interface EditInvoiceModalProps {
   isOpen: boolean;
@@ -25,16 +26,15 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
 }) => {
   const [isClosing,] = useState(false);
   
-  // Get today's date in YYYY-MM-DD format
-  const getTodayDate = () => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
+  // Get today's date in DD-MM-YYYY format (invoice format)
+  const getTodayInvoiceDate = () => {
+    return getTodayDate();
   };
 
   const [formData, setFormData] = useState<EditInvoiceData>({
     business: initialData?.business || '',
     customer: initialData?.customer || '',
-    date: initialData?.date || getTodayDate(),
+    date: initialData?.date || getTodayInvoiceDate(),
     invoiceNo: initialData?.invoiceNo || ''
   });
 
@@ -59,6 +59,16 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       }));
     }
   }, [pedhis, formData.business]);
+
+  // Ensure date is always set to today's date when no valid date is provided
+  useEffect(() => {
+    if (!formData.date || formData.date === '' || formData.date === '00-undefined-undefined' || formData.date === "undefined-undefined-00") {
+      setFormData(prev => ({
+        ...prev,
+        date: getTodayInvoiceDate()
+      }));
+    }
+  }, [formData.date]);
 
   const handleClose = () => {
     onClose();
@@ -112,6 +122,8 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       [field]: value
     }));
   };
+
+  console.log('forma',formData)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,8 +188,8 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
 
           {/* Date */}
           <DatePicker
-            value={formData.date}
-            onChange={(value) => handleInputChange('date', value)}
+            value={formData.date ? formatDateToYYYYMMDD(formData.date) : ''}
+            onChange={(value) => handleInputChange('date', formatDateToDDMMYYYY(value))}
             label="Date"
             placeholder="Select date"
           />
